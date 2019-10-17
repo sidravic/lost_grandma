@@ -2,14 +2,14 @@
   "development": {
     "username": "sidravic",
     "password": "sidravic",
-    "database": "goglance_development",
+    "database": "sephora_crawler_development",
     "host": "10.0.0.6",
     "dialect": "postgres"
   },
   "test": {
     "username": "root",
     "password": null,
-    "database": "database_test",
+    "database": "sephora_crawler_test",
     "host": "127.0.0.1",
     "dialect": "mysql",
     "operatorsAliases": false
@@ -17,7 +17,7 @@
   "production": {
     "username": "root",
     "password": null,
-    "database": "database_production",
+    "database": "sephora_crawler_production",
     "host": "127.0.0.1",
     "dialect": "mysql",
     "operatorsAliases": false

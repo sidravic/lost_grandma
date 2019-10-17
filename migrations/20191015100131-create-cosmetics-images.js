@@ -41,9 +41,14 @@ module.exports = {
       return queryInterface.addIndex('cosmetics_images', ['cosmetics_brand_id'], {indexName: 'idx_cimages_cb_id'});
     }
 
+    const addUniqueIndexProductIdBrandIdUrl = async() => {
+      return queryInterface.addIndex('cosmetics_images', ['cosmetics_brand_id', 'cosmetics_product_id', 'image_url'], {indexName: 'idx_cbrandproductimage', unique: true});
+    }
+
     await createCosmeticsImages();
     await addIndexOnCosmeticsProductId();
     await addIndexOnCosmeticsBrandId();
+    await addUniqueIndexProductIdBrandIdUrl();
   },
   down: (queryInterface, Sequelize) => {
     return queryInterface.dropTable('cosmetics_images');

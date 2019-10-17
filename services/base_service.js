@@ -17,4 +17,16 @@ class BaseService{
     }
 }
 
-module.exports = BaseService;
+class BaseServiceResponse{
+    constructor(errors, errorCode){
+        this.errors = errors;
+        this.errorCode = errorCode
+    }
+
+    isSuccess(){
+        return (any(this.errors) ? false : true)
+    }
+}
+
+module.exports.BaseService = BaseService;
+module.exports.BaseServiceResponse = BaseServiceResponse;

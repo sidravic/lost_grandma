@@ -24,6 +24,12 @@ class Review extends Sequelize.Model {
       sequelize: sequelize
     })
   }
+
+  static associate(models) {
+    this.belongsTo(models.Product, { foreignKey: 'cosmetics_product_id', targetKey: 'id', sourceKey: 'cosmetics_brand_id'})
+    this.belongsTo(models.Brand, {foreignKey: 'cosmetics_brand_id', targetKey: 'id', sourceKey: 'cosmetics_brand_id'})
+    this.hasMany(models.ReviewComment, {sourceKey: 'id', targetKey: 'cosmetics_review_id'})
+  }
 }
 
 Review.init(dbConn, Sequelize);

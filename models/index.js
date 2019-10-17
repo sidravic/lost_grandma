@@ -4,7 +4,6 @@ const fs = require('fs');
 const path = require('path');
 const Sequelize = require('sequelize');
 const basename = path.basename(__filename);
-const env = process.env.NODE_ENV || 'development';
 const dbConn = require('./../config/db')
 const db = {};
 
@@ -14,12 +13,9 @@ fs
     return (file.indexOf('.') !== 0) && (file !== basename) && (file.slice(-3) === '.js');
   })
   .forEach(file => {
-    debugger;
-    // const model = sequelize['import'](path.join(__dirname, file));
-    // db[model.name] = model;
     let modelPath = path.join(__dirname, file);
     let model = require(modelPath)
-    db[model.name] = model.init(dbConn, Sequelize);
+    db[model.name] = model
   });
 
 
@@ -28,8 +24,8 @@ Object.keys(db).forEach(modelName => {
     db[modelName].associate(db);
   }
 });
-console.log(db);
-db.sequelize = sequelize;
+
+db.dbConn = dbConn;
 db.Sequelize = Sequelize;
 
 module.exports = db;

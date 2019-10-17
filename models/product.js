@@ -28,9 +28,10 @@ const getTotalResults = (apiResponse) => {
 }
 
 const getReviewMetaData = (apiResponse) => {
-    const products = apiResponse.data.Includes.Products;
-    const productsOrder = apiResponse.data.Includes.ProductsOrder;
+    const products = apiResponse.data.Includes.Products || {};
+    const productsOrder = apiResponse.data.Includes.ProductsOrder || [];
     let newProduct = {};
+
 
     for (let [k, v] of Object.entries(products)) {
         newProduct.name = v['Name']

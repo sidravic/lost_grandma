@@ -4,14 +4,19 @@ const redisUrl = process.env.REDIS_URL
 const PersistQueue = new Bull('persist_queue', redisUrl);
 const fs = require('fs')
 const util = require('util')
-const writeFile = util.promisify(fs.writeFile)
+//const writeFile = util.promisify(fs.writeFile)
+const ProductPersistService = require('./../services/product_persist_service');
 
 const PersistQueueWorker = async(job, done) => {
     const data = job.data;
     logger.info({worker: 'PersistQueueProcessor', data: job.id, status: 'started'});
 
-    const writeStatus = await writeFile(`new_file.json`, data)
-    console.log(writeStatus);
+
+    const productPayload = JSON.parse(data);
+    const service =  new ProductPersistService(productPayload);
+    debugger;
+    let serviceResponse = await service.invoke();
+    debugger;
 
     setTimeout(() => {
         done();

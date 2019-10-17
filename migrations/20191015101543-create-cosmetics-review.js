@@ -60,9 +60,14 @@ module.exports = {
       return queryInterface.addIndex('cosmetics_reviews', ['cosmetics_brand_id'], {indexName: 'idx_creviews_cb_id'});
     }
 
+    const addUniqueIndexOnBrandIdProductId = async() => {
+      return queryInterface.addIndex('cosmetics_reviews', ['cosmetics_brand_id', 'cosmetics_product_id'], {indexName: 'idx_creviews_brand_product', unique: true});
+    }
+
     await createCosmeticsReviews();
     await addIndexOnCosmeticsProductId();
     await addIndexOnCosmeticsBrandId();
+    await addUniqueIndexOnBrandIdProductId();
   },
   down: (queryInterface, Sequelize) => {
     return queryInterface.dropTable('cosmetics_reviews');

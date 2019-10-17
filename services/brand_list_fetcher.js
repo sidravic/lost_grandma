@@ -90,9 +90,8 @@ class BrandListFetcher {
 }
 
 //https://www.sephora.com/brands-list
-//https://www.sephora.com/brand/acqua-di-parma/all
 
-const fetcher = new BrandListFetcher('https://www.sephora.com/product/alyssa-edwards-eyeshadow-palette-P444956?icid2=anastasia_whatsnew_us_productcarousel_ufe:p444956:product');
+const fetcher = new BrandListFetcher('https://www.sephora.com/brand/acqua-di-parma/all');
 console.log('Starting fetcher');
 fetcher.invoke();
 

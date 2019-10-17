@@ -56,12 +56,17 @@ module.exports = {
       });
     }
 
-    const createIndexOnProductName = () => {
+    const addIndexOnProductName = () => {
       queryInterface.addIndex('cosmetics_products', ['name'], {indexName: 'idx_cproducts_name'})
     }
 
+    const addUniqueIndexOnBrandIdUPC = () => {
+      queryInterface.addIndex('cosmetics_products', ['cosmetics_brand_id', 'upc'], {indexName: 'idx_brand_id_upc', unique: true})
+    }
+
     await createCosmeticProducts();
-    await createIndexOnProductName();
+    await addIndexOnProductName();
+    await addUniqueIndexOnBrandIdUPC();
 
   },
   down: (queryInterface, Sequelize) => {

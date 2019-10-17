@@ -1,15 +1,19 @@
-module.exports.isEmpty = (object) => {
+const isEmpty = (object) => {
     return (Object.keys(object).length == 0 ? true : false)
 }
 
-module.exports.any =  (arr) => {
+module.exports.isEmpty = isEmpty;
+
+const any =  (arr) => {
     if (!Array.isArray(arr)) {
         if (arr == null || arr == undefined) return false;
-        if (typeof(arr) == 'object') { throw new Error('Invalid error datatype')}
+        if (typeof(arr) == 'object')         return (!isEmpty(arr));
     } else {
         return ((arr.length > 0 ) ? true : false)
     }
 }
+
+module.exports.any = any;
 
 /*
 
@@ -26,6 +30,7 @@ module.exports.any =  (arr) => {
  */
 
 const syncError = async (func) => {
+    const sequelizeErrors = ['SequelizeUniqueConstraintError', 'SequelizeValidationError']
     try {
         let value = await func;
 
@@ -33,8 +38,9 @@ const syncError = async (func) => {
     } catch (e) {
         let errors = [];
 
-        if (e.name == 'SequelizeValidationError') {
-            errors = e.errors.map(error => error.message)
+        debugger;
+        if (sequelizeErrors.includes(e.name)) {
+            errors = e.errors.map(error => { return error.message})
             return [null, errors];
         } else {
             throw e;

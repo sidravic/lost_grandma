@@ -56,5 +56,5 @@ class ProductFeedbackFetcher {
 
 }
 
-let f = new ProductFeedbackFetcher('P443401').invoke();
+
 module.exports = ProductFeedbackFetcher

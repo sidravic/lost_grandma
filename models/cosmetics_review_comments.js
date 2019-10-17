@@ -13,6 +13,8 @@ class ReviewComment extends Sequelize.Model {
             review_text: {type: Sequelize.TEXT},
             review_title: {type: Sequelize.STRING},
             avataar_url: {type: Sequelize.STRING},
+            submitted_date: {type: Sequelize.DATE},
+            modified_date: {type: Sequelize.DATE},
             other_data: {type: Sequelize.JSON},
             createdAt: Sequelize.DATE,
             updatedAt: Sequelize.DATE
@@ -21,6 +23,10 @@ class ReviewComment extends Sequelize.Model {
             tableName: 'cosmetics_review_comments',
             sequelize: sequelize
         })
+    }
+
+    static associate(models) {
+        this.belongsTo(models.Review, { foreignKey: 'cosmetics_review_id', targetKey: 'id', sourceKey: 'cosmetics_review_id'})
     }
 }
 
