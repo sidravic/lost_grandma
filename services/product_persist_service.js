@@ -148,21 +148,16 @@ class ProductPersistService extends BaseService {
     }
 
     async invoke() {
-        try {
-            await this.createBrand();
-            await this.createProduct();
-            await this.createProductSource();
-            await this.createImages();
-            await this.createReview();
-            await this.createReviewComments();
-        }catch(e){
-            console.log(e.message, e.name, e.stack());
-            console.log(this.productPayload)
-        }
+        await this.createBrand();
+        await this.createProduct();
+        await this.createProductSource();
+        await this.createImages();
+        await this.createReview();
+        await this.createReviewComments();
 
         return (new Promise((resolve, reject) => {
             let response = new ProductPersistServiceResponse(this.errors, this.errorCode, this.brand, this.product,
-                                                             this.source, this.images, this.review, this.reviewComments)
+                this.source, this.images, this.review, this.reviewComments)
             resolve(response);
         }))
     }
@@ -296,11 +291,14 @@ class ProductPersistService extends BaseService {
     }
 
     async findReview(brand, product) {
-        debugger;
-        const [review, errors] = await syncError(Review.findOne({where: {cosmetics_brand_id: brand.id, cosmetics_product_id: product.id}}))
+        const [review, errors] = await syncError(Review.findOne({
+            where: {
+                cosmetics_brand_id: brand.id,
+                cosmetics_product_id: product.id
+            }
+        }))
 
-        debugger;
-        if(any(errors)){
+        if (any(errors)) {
             logger.error({src: 'product_persist_service', event: 'findReview', errors: errors})
         } else {
             this.review = review;
@@ -310,8 +308,7 @@ class ProductPersistService extends BaseService {
     async findReviewComments(review) {
         const [reviewComments, errors] = await syncError(ReviewComment.findAll({where: {cosmetics_review_id: review.id}}))
 
-        debugger;
-        if(any(errors)) {
+        if (any(errors)) {
             logger.error({src: 'product_persist_service', event: 'findReviewComments', errors: errors})
         } else {
             this.reviewComments = reviewComments;
@@ -321,15 +318,15 @@ class ProductPersistService extends BaseService {
 
     }
 
-    async createReviewComments(){
+    async createReviewComments() {
         if (this.anyErrors()) return;
 
         const reviewComments = fetchReviewComments(this.productPayload, this.review)
-        if(!any(reviewComments)) return;
+        if (!any(reviewComments)) return;
 
         const [comments, errors] = await syncError(ReviewComment.bulkCreate(reviewComments));
 
-        if (any(errors)){
+        if (any(errors)) {
             logger.error({src: 'product_persist_service', event: 'createReviewComments', errors: errors})
             return (await this.findReviewComments(this.review));
         } else {
@@ -339,7 +336,7 @@ class ProductPersistService extends BaseService {
 }
 
 class ProductPersistServiceResponse extends BaseServiceResponse {
-    constructor(errors, errorCode, brand, product, source, images, review, reviewComments){
+    constructor(errors, errorCode, brand, product, source, images, review, reviewComments) {
         super(errors, errorCode);
         this.brand = brand;
         this.product = product;

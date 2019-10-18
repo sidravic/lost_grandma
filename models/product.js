@@ -32,7 +32,6 @@ const getTotalResults = (apiResponse) => {
 }
 
 const getReviewMetaData = (apiResponse) => {
-    debugger;
     const products = apiResponse.data.Includes.Products || {};
     const productsOrder = apiResponse.data.Includes.ProductsOrder || [];
     let newProduct = {};

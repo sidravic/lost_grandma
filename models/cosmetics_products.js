@@ -34,7 +34,6 @@ class Product extends Sequelize.Model {
 
     asJSON(){
       let attributes = {...this.dataValues}
-      debugger;
     }
 }
 

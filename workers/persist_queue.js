@@ -9,18 +9,17 @@ const ProductPersistService = require('./../services/product_persist_service');
 
 const PersistQueueWorker = async(job, done) => {
     const data = job.data;
-    logger.info({worker: 'PersistQueueProcessor', data: job.id, status: 'started'});
+    logger.info({src: 'PersistQueueProcessor', data: job.id, status: 'started'});
 
 
     const productPayload = JSON.parse(data);
     const service =  new ProductPersistService(productPayload);
-    debugger;
-    let serviceResponse = await service.invoke();
-    debugger;
 
-    setTimeout(() => {
-        done();
-    }, 5000)
+    let serviceResponse = await service.invoke();
+    logger.info({src: 'PersistQueueProcessor', data: job.id, status: 'completed', response: serviceResponse})
+    done();
+
+
 }
 
 module.exports.PersistQueue = PersistQueue;

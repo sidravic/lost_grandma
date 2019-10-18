@@ -38,7 +38,6 @@ const syncError = async (func) => {
     } catch (e) {
         let errors = [];
 
-        debugger;
         if (sequelizeErrors.includes(e.name)) {
             errors = e.errors.map(error => { return error.message})
             return [null, errors];

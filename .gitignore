@@ -3,3 +3,4 @@ node_modules
 .envrc
 new_file.json
 .idea
+sephora-fetch-queue

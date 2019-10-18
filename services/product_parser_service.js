@@ -1,5 +1,6 @@
 const logger = require('./../config/logger');
 const cheerio = require('cheerio');
+const url = require('url')
 
 const ProductFeedbackFetcherService = require('./product_feedback_fetcher');
 const PersistQueue = require('./../workers/persist_queue').PersistQueue;
@@ -106,6 +107,12 @@ class ProductParserService {
 
     findSephoraProductUrl() {
         let productUrl = this.queueItem.url;
+
+        if(productUrl) {
+            let parsedUrl = url.parse(productUrl)
+            let sourceUrl = parsedUrl.protocol + '//' + parsedUrl.host + parsedUrl.pathname
+            productUrl = sourceUrl;
+        }
         this.productInfo.productUrl = productUrl;
     }
 
