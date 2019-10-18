@@ -148,12 +148,17 @@ class ProductPersistService extends BaseService {
     }
 
     async invoke() {
-        await this.createBrand();
-        await this.createProduct();
-        await this.createProductSource();
-        await this.createImages();
-        await this.createReview();
-        await this.createReviewComments();
+        try {
+            await this.createBrand();
+            await this.createProduct();
+            await this.createProductSource();
+            await this.createImages();
+            await this.createReview();
+            await this.createReviewComments();
+        }catch(e){
+            console.log(e.message, e.name, e.stack());
+            console.log(this.productPayload)
+        }
 
         return (new Promise((resolve, reject) => {
             let response = new ProductPersistServiceResponse(this.errors, this.errorCode, this.brand, this.product,

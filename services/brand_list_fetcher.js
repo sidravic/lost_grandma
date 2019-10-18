@@ -90,8 +90,9 @@ class BrandListFetcher {
 }
 
 //https://www.sephora.com/brands-list
-
-const fetcher = new BrandListFetcher('https://www.sephora.com/brand/acqua-di-parma/all');
+//https://www.sephora.com/brand/acqua-di-parma/all
+//https://www.sephora.com/product/blu-mediterraneo-cipresso-di-toscana-P447762?icid2=acquadiparma_bestsellers_us_productcarousel_ufe:p447762:product
+const fetcher = new BrandListFetcher('https://www.sephora.com/product/blu-mediterraneo-cipresso-di-toscana-P447762?icid2=acquadiparma_bestsellers_us_productcarousel_ufe:p447762:product');
 console.log('Starting fetcher');
 fetcher.invoke();
 

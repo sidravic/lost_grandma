@@ -11,7 +11,7 @@ const parseSephoraReview = (apiResponse) => {
         metaData.UPCs,
         metaData.EANs,
         metaData.ImageUrl,
-        metaData.rawData.productPageUrl,
+        metaData.productPageUrl,
         metaData.reviewStatistics,
         reviewComments,
         totalResults,
@@ -20,21 +20,26 @@ const parseSephoraReview = (apiResponse) => {
 }
 
 const getReviewComments = (apiResponse) => {
-    return apiResponse.data.Results;
+    let reviewComments = [];
+    reviewComments = apiResponse.data.Results;
+    return reviewComments;
 }
 
 const getTotalResults = (apiResponse) => {
-    return apiResponse.data.TotalResults;
+    let totalResults = 0;
+    totalResults = apiResponse.data.TotalResults;
+    return totalResults;
 }
 
 const getReviewMetaData = (apiResponse) => {
+    debugger;
     const products = apiResponse.data.Includes.Products || {};
     const productsOrder = apiResponse.data.Includes.ProductsOrder || [];
     let newProduct = {};
 
 
     for (let [k, v] of Object.entries(products)) {
-        newProduct.name = v['Name']
+        newProduct.name = v.Name
         newProduct.brand = v.Brand.Name;
         newProduct.brandId = v.Brand.Id;
         newProduct.description = v.Description;
@@ -47,13 +52,15 @@ const getReviewMetaData = (apiResponse) => {
         newProduct.reviewStatistics = v.ReviewStatistics;
         newProduct.Id = v.Id;
         newProduct.rawData = v;
+        newProduct.productPageUrl = v.productPageUrl;
     }
 
     return newProduct;
 }
 
 class ProductReview {
-    constructor(id, name, brand, brandId, description, EANs, UPCs, imageUrl, productPageUrl, reviewStatistics, reviewComments, totalResults, rawData) {
+    constructor(id=null, name=null, brand=null, brandId=null, description=null, EANs=[], UPCs=[], imageUrl=null,
+                productPageUrl=null, reviewStatistics={}, reviewComments=[], totalResults=0, rawData={}) {
         this.id = id
         this.name = name;
         this.brand = brand;
@@ -72,6 +79,7 @@ class ProductReview {
     static fromReview(apiResponse) {
         const [Id, name, brand, brandId, description, UPCs, EANs, imageUrl, productPageUrl, reviewStatistics, reviewComments, totalResults, rawData] = parseSephoraReview(apiResponse);
         const productReview = new ProductReview(Id, name, brand, brandId, description,EANs, UPCs, imageUrl, productPageUrl, reviewStatistics, reviewComments, totalResults, rawData);
+
         return productReview.asJSON();
     }
 
