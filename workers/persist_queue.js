@@ -16,7 +16,12 @@ const PersistQueueWorker = async(job, done) => {
     const service =  new ProductPersistService(productPayload);
 
     let serviceResponse = await service.invoke();
-    logger.info({src: 'PersistQueueProcessor', data: job.id, status: 'completed', response: serviceResponse})
+    let source = serviceResponse.source;
+    let sourceUrl = null;
+    if(source){
+        sourceUrl = source.source_url
+    }
+    logger.info({src: 'PersistQueueProcessor', data: job.id, status: 'completed', url: sourceUrl})
     done();
 
 

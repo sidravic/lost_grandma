@@ -76,7 +76,9 @@ const fetchImageDetails = (payload, brand, product) => {
 
 const sanitizeProductReviewComments = (reviewComments) => {
     let comments = reviewComments.map((reviewComment) => {
-        reviewComment.ReviewText = reviewComment.ReviewText.replace(/(\r\n|\n|\r)/gm, "");
+        if(reviewComment.ReviewText) {
+            reviewComment.ReviewText = reviewComment.ReviewText.replace(/(\r\n|\n|\r)/gm, "");
+        }
         return reviewComment
     })
 
