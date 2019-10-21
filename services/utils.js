@@ -1,3 +1,5 @@
+const util = require('util');
+
 const isEmpty = (object) => {
     return (Object.keys(object).length == 0 ? true : false)
 }
@@ -55,3 +57,23 @@ const flatten = (arr) => {
 }
 
 module.exports.flatten = flatten;
+
+const generateRandomTill = (end) => {
+    return (Math.floor(Math.random() * end))
+}
+
+module.exports.generateRandomTill = generateRandomTill;
+
+const timeout = (seconds) => {
+    return new Promise((resolve, reject) => {
+        let sleepDelay = seconds * 1000;
+        setTimeout(resolve, sleepDelay);
+    })
+}
+
+
+const sleep = async (delay) => {
+    await timeout(delay);
+}
+
+module.exports.sleep = sleep;

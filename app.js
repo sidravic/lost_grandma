@@ -5,7 +5,6 @@ logger.info('Logger logging to logstash')
 let service = new BrandListFetcherService(process.env.BASE_CRAWL_URL);
 
 const freezeCrawlerQueueAndExit = async () => {
-    debugger;
     console.log('signal received');
     let freezeStatus = await service.freezeQueue();
 

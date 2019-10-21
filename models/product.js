@@ -78,7 +78,6 @@ class ProductReview {
     static fromReview(apiResponse) {
         const [Id, name, brand, brandId, description, UPCs, EANs, imageUrl, productPageUrl, reviewStatistics, reviewComments, totalResults, rawData] = parseSephoraReview(apiResponse);
         const productReview = new ProductReview(Id, name, brand, brandId, description,EANs, UPCs, imageUrl, productPageUrl, reviewStatistics, reviewComments, totalResults, rawData);
-
         return productReview.asJSON();
     }
 

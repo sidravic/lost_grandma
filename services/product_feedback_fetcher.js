@@ -1,5 +1,6 @@
 const axios =  require('axios');
 const Product = require('./../models/product');
+const { SocksAgent } = require('./proxy')
 
 const getAxiosConfig = (productId, passKey) => {
     return {
@@ -8,7 +9,7 @@ const getAxiosConfig = (productId, passKey) => {
             'Filter': 'contentlocale:en*',
             'Filter': `ProductId:${productId}`,
             'Sort': 'TotalPositiveFeedbackCount:desc',
-            'Limit': 50,
+            'Limit': 100,
             'Offset': 0,
             'Include': 'Products,Comments',
             'Stats': 'Reviews',
@@ -16,6 +17,9 @@ const getAxiosConfig = (productId, passKey) => {
             'apiversion': '5.4',
             'Locale': 'en_US'
         },
+        httpAgent: SocksAgent,
+        httpsAgent: SocksAgent,
+
         validateStatus: (status) => { return status >= 200 && status < 300 },
         // proxy: {
         //     host: '127.0.0.1',
