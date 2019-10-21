@@ -1,7 +1,12 @@
+SocksListenAddress 0.0.0.0/0
+SOCKSPort 0.0.0.0:9050
+SocksPolicy accept *
+
 DataDirectory /tor/tor-browser_en-US/Browser/TorBrowser/Data/Tor
 GeoIPFile /tor/tor-browser_en-US/Browser/TorBrowser/Data/Tor/geoip
 GeoIPv6File /tor/tor-browser_en-US/Browser/TorBrowser/Data/Tor/geoip6
 #HTTPTunnelPort 9080
-ControlPort 9051
+ControlListenAddress 0.0.0.0/0
+ControlPort 0.0.0.0:9051
 StrictNodes 1
 ExitNodes {us}

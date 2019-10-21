@@ -1,0 +1,44 @@
+version: '3'
+services:
+  lost_grandma:
+    depends_on:
+      - tor
+    build: .
+    image: lost_grandma:latest
+    env_file:
+      - development.env
+    networks:
+      - main_network
+    #extra_hosts:
+    #  - "dockerhost:10.10.10.10"
+    command: ['./launch.sh']
+  worker:
+    depends_on:
+      - tor
+    build: .
+    image: lost_grandma:latest
+    env_file:
+      - development.env
+    networks:
+      - main_network
+    #extra_hosts:
+    #  - "dockerhost:10.10.10.10"
+    command: ["./launch-workers.sh"]
+  tor:
+    networks:
+      - main_network
+    build:
+      context: ./scripts/tor
+      dockerfile: Dockerfile
+    image: tor:latest
+    expose:
+      - 9050
+      - 9080
+      - 9051
+    ports:
+      - "9050:9050"
+      - "9051:9051"
+      - "9080:9080"
+    command: ["./launch_tor.sh"]
+networks:
+  main_network:

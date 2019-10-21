@@ -2,6 +2,7 @@ FROM node:12.10
 
 # Create app directory
 RUN mkdir -p /app /tor
+RUN apt-get -y update && apt-get install -y nmap telnet vim
 
 ENV APP_DIR /app
 WORKDIR $APP_DIR

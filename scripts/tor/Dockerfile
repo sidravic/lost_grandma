@@ -8,9 +8,10 @@ COPY . $TOR_DIR
 RUN ./download_tor.sh
 #
 COPY sample_torrc /etc/tor/torrc
+COPY torsocks.conf /etc/tor/torsocks.conf
 #
 EXPOSE 9050
 EXPOSE 9051
 EXPOSE 9080
 #
-CMD ['./launch_tor.sh']
+#CMD ['./launch_tor.sh']
