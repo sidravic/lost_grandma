@@ -1,0 +1,7 @@
+DataDirectory /tor/tor-browser_en-US/Browser/TorBrowser/Data/Tor
+GeoIPFile /tor/tor-browser_en-US/Browser/TorBrowser/Data/Tor/geoip
+GeoIPv6File /tor/tor-browser_en-US/Browser/TorBrowser/Data/Tor/geoip6
+#HTTPTunnelPort 9080
+ControlPort 9051
+StrictNodes 1
+ExitNodes {us}
