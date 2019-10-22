@@ -4,25 +4,21 @@ services:
     depends_on:
       - tor
     build: .
-    image: lost_grandma:latest
+    image: ${LOST_GRANDMA_IMAGE_ID}
     env_file:
       - development.env
     networks:
-      - main_network
-    #extra_hosts:
-    #  - "dockerhost:10.10.10.10"
+      - main_network   
     command: ['./launch.sh']
   worker:
     depends_on:
       - tor
     build: .
-    image: lost_grandma:latest
+    image: ${LOST_GRANDMA_IMAGE_ID}
     env_file:
       - development.env
     networks:
-      - main_network
-    #extra_hosts:
-    #  - "dockerhost:10.10.10.10"
+      - main_network  
     command: ["./launch_workers.sh"]
   tor:
     networks:
@@ -30,7 +26,7 @@ services:
     build:
       context: ./scripts/tor
       dockerfile: Dockerfile
-    image: tor:latest
+    image: ${TOR_IMAGE_ID}
     expose:
       - 9050
       - 9080

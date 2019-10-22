@@ -4,6 +4,9 @@ new_file.json
 .idea
 sephora-fetch-queue
 quick_queries
+local_development.env
+.vscode
+
 
 Innocent Lurker
 Needy Stalker

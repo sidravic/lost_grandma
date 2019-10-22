@@ -10,3 +10,4 @@ ControlListenAddress 0.0.0.0/0
 ControlPort 0.0.0.0:9051
 StrictNodes 1
 ExitNodes {us}
+HashedControlPassword 16:C0A8979E66E9728D603C525294DA6509B1C89AF232BC23C22B75AAF4CD

@@ -2,10 +2,14 @@ const logger = require('../../config/logger');
 const util = require('util');
 const exec = require('child_process').exec;
 const asyncExec = util.promisify(exec)
+const url = require('url');
+const torUrl = url.parse(process.env.TOR_URL);
+
 
 const recreateCircuits = async () => {
+    const newCommand = `echo -e 'AUTHENTICATE "lost_grandma"\r\nsignal NEWNYM\r\nQUIT' | nc ${torUrl.hostname} 9051`
     const command = '(echo authenticate \'""\'; echo signal newnym; echo quit) | nc localhost 9051'
-    const {stdout, stderr} = await asyncExec(command)
+    const {stdout, stderr} = await asyncExec(newCommand)
     logger.info({
         event: 'recreateCircuits',
         command: '(echo authenticate \'""\'; echo signal newnym; echo quit) | nc localhost 9051',
