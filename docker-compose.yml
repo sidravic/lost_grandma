@@ -23,7 +23,7 @@ services:
       - main_network
     #extra_hosts:
     #  - "dockerhost:10.10.10.10"
-    command: ["./launch-workers.sh"]
+    command: ["./launch_workers.sh"]
   tor:
     networks:
       - main_network

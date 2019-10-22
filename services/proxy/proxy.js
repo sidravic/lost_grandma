@@ -7,7 +7,7 @@ const SocksProxyAgent = require('socks-proxy-agent');
 
 // HTTP/HTTPS proxy to connect to
 
-const proxy = 'socks5://127.0.0.1:9050';
+const proxy = process.env.TOR_URL;
 const httpsAgent = new SocksProxyAgent(proxy);
 
 // Global configuration for all client requests with http/https library.
