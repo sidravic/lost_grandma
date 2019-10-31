@@ -14,6 +14,7 @@ const freezeCrawlerQueueAndExit = async () => {
     }, 3000)
 }
 
+
 process.on('SIGINT', freezeCrawlerQueueAndExit)
 process.on('SIGTERM', freezeCrawlerQueueAndExit);
 // catches "kill pid" (for example: nodemon restart)
@@ -21,4 +22,3 @@ process.on('SIGUSR1',freezeCrawlerQueueAndExit);
 process.on('SIGUSR2', freezeCrawlerQueueAndExit);
 service.invoke();
 
-console.log();

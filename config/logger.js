@@ -1,5 +1,5 @@
 const winston = require('winston');
-const logstashTransport = require('winston-logstash-transport').LogstashTransport;
+const LogstashTransport = require('winston-logstash-transport').LogstashTransport;
 
 
 const getTransports = () => {
@@ -9,10 +9,10 @@ const getTransports = () => {
         }),
     ];
 
-    if (process.env.NODE_ENV != 'development') {
-        let logstashTransport = new logstashTransport({
-            host: process.env.LOGSTASH_HOST,
-            port: process.env.LOGSTASH_UDP_PORT
+    if (process.env.NODE_ENV == 'development') {
+        let logstashTransport = new LogstashTransport({
+            host: 'localhost',
+            port: 5228
         })
         transports.push(logstashTransport);
     }
@@ -26,6 +26,7 @@ const getFormats = () => {
     if (process.env.NODE_ENV == 'development') {
         formats = winston.format.combine(
             winston.format.json(),
+            winston.format.logstash(),
             winston.format.timestamp({
                 format: 'YYYY-MM-DD HH:mm:ss'
             })
@@ -42,7 +43,6 @@ const getFormats = () => {
 
     return formats;
 }
-
 
 const logger = winston.createLogger({
     level: 'info',
