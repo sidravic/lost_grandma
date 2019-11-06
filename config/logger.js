@@ -25,16 +25,14 @@ const getFormats = () => {
     let formats = null;
     if (process.env.NODE_ENV == 'development') {
         formats = winston.format.combine(
-            winston.format.json(),
-            winston.format.logstash(),
+            winston.format.json(),            
             winston.format.timestamp({
                 format: 'YYYY-MM-DD HH:mm:ss'
             })
         )
     } else {
         formats = winston.format.combine(
-            winston.format.json(),
-            winston.format.logstash(),
+            winston.format.json(),            
             winston.format.timestamp({
                 format: 'YYYY-MM-DD HH:mm:ss'
             })
