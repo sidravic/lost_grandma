@@ -51,6 +51,9 @@ const logger = winston.createLogger({
     transports: getTransports()
 });
 
+process.on('uncaughtException', (err) => {
+    logger.error({event: 'uncaughtException', message: err.message, stack: err.stack })
+})
 
 logger.info({status: 'Logger started111.'});
 module.exports = logger;
