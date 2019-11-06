@@ -1,11 +1,11 @@
 #!/usr/bin/env bash
 function login_ecs(){
-    echo "Logging to ECR"
-    $(aws ecr get-login --no-include-email)
+    echo "Logging to Gitlab"
+    docker login -u $GITLAB_USERNAME -p $GITLAB_PERSONAL_ACCESS_TOKEN $GITLAB_REGISTRY
 
     if [ $? -eq 0 ]
     then
-        echo "Successfully logged into ECR"
+        echo "Successfully logged into Gitlab"
     else
         echo "Login failed"
         exit 1
@@ -42,13 +42,13 @@ function lost_grandma_build_and_push(){
 
     docker build -t goglance/lost-grandma:"${BRANCH_NAME}_${COMMIT_ID}" .
     docker tag goglance/lost-grandma:"${BRANCH_NAME}_${COMMIT_ID}" goglance/lost-grandma:latest
-    docker tag goglance/lost-grandma:"${BRANCH_NAME}_${COMMIT_ID}" "${AWS_ECR_REPOSITORY_URI}:${BRANCH_NAME}_${COMMIT_ID}"
-    docker tag goglance/lost-grandma:"${BRANCH_NAME}_${COMMIT_ID}" "${AWS_ECR_REPOSITORY_URI}:latest"
-    docker push "${AWS_ECR_REPOSITORY_URI}:${BRANCH_NAME}_${COMMIT_ID}"
+    docker tag goglance/lost-grandma:"${BRANCH_NAME}_${COMMIT_ID}" "${GITLAB_REGISTRY}/goglance/lost-grandma:${BRANCH_NAME}_${COMMIT_ID}"
+    docker tag goglance/lost-grandma:"${BRANCH_NAME}_${COMMIT_ID}" "${GITLAB_REGISTRY}/goglance/lost-grandma:latest"
+    docker push "${GITLAB_REGISTRY}/goglance/lost-grandma:${BRANCH_NAME}_${COMMIT_ID}"
 }
 
 function export_image_locally(){
-    export LOST_GRANDMA_IMAGE_ID="goglance/lost-grandma:${BRANCH_NAME}_${COMMIT_ID}"    
+    export LOST_GRANDMA_IMAGE_ID="${GITLAB_REGISTRY}/goglance/lost-grandma:${BRANCH_NAME}_${COMMIT_ID}"    
 }
 
 function build_tor_and_push(){
@@ -58,14 +58,15 @@ function build_tor_and_push(){
     timestamp=$(date '+%s')
     echo "Tag timestamp: ${timestamp}"
     docker build -t goglance/tor:"tor-${timestamp}" .
+    docker tag goglance/tor:"tor-${timestamp}" "${GITLAB_REGISTRY}/goglance/lost-grandma:tor-latest"
+    docker tag goglance/tor:"tor-${timestamp}" "${GITLAB_REGISTRY}/goglance/lost-grandma:tor-${timestamp}"
     docker tag goglance/tor:"tor-${timestamp}" goglance/tor:latest
-    docker tag goglance/tor:"tor-${timestamp}" "${AWS_ECR_REPOSITORY_URI_TOR}:tor-${timestamp}"
-    docker tag goglance/tor:"tor-${timestamp}" "${AWS_ECR_REPOSITORY_URI_TOR}:latest"
-    docker push "${AWS_ECR_REPOSITORY_URI_TOR}:tor-${timestamp}"    
+    docker push "${GITLAB_REGISTRY}/goglance/lost-grandma:tor-latest"    
+    docker push "${GITLAB_REGISTRY}/goglance/lost-grandma:tor-${timestamp}"
 }
 
 function export_tor_image_locally(){
-    export TOR_IMAGE_ID="goglance/tor:tor-${timestamp}"
+    export TOR_IMAGE_ID="${GITLAB_REGISTRY}/goglance/lost-grandma:tor-${timestamp}"
 }
 
 function lost_grandma(){

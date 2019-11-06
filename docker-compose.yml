@@ -6,23 +6,41 @@ services:
     build: .
     image: ${LOST_GRANDMA_IMAGE_ID}
     env_file:
-      - development.env
+      - stack-development.env
     networks:
-      - main_network   
+      - core-infra
     command: ['./launch.sh']
+    deploy:
+      restart_policy:
+        condition: on-failure
+        delay: 5s
+        max_attempts: 10
+        window: 180s
+      placement:
+        constraints:
+          - node.labels.stateless == true
   worker:
     depends_on:
       - tor
     build: .
     image: ${LOST_GRANDMA_IMAGE_ID}
     env_file:
-      - development.env
+      - stack-development.env
     networks:
-      - main_network  
+      - core-infra
     command: ["./launch_workers.sh"]
+    deploy:
+      restart_policy:
+        condition: on-failure
+        delay: 5s
+        max_attempts: 100
+        window: 180s      
+      placement:
+        constraints:
+          - node.labels.stateless == true
   tor:
     networks:
-      - main_network
+      - core-infra
     build:
       context: ./scripts/tor
       dockerfile: Dockerfile
@@ -36,5 +54,16 @@ services:
       - "9051:9051"
       - "9080:9080"
     command: ["./launch_tor.sh"]
-networks:
-  main_network:
+    deploy:
+      restart_policy:
+        condition: on-failure
+        delay: 5s
+        max_attempts: 10
+        window: 180s
+      placement:
+        constraints:
+          - node.labels.stateless == true
+  
+networks:  
+  core-infra:
+    external: true

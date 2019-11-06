@@ -38,7 +38,7 @@ module.exports = {
             });
         }
 
-        await enablePgCryptoExtension();
+        //await enablePgCryptoExtension();
         await createBrands();
 
     },
