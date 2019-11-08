@@ -11,8 +11,8 @@ const getTransports = () => {
 
     if (process.env.NODE_ENV == 'development') {
         let logstashTransport = new LogstashTransport({
-            host: 'localhost',
-            port: 5228
+            host: process.env.LOGSTASH_HOST,
+            port: process.env.LOGSTASH_PORT
         })
         transports.push(logstashTransport);
     }
