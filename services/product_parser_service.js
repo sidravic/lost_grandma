@@ -187,7 +187,8 @@ class ProductParserService {
     }
 
     async addToPersistQueue(){
-        const job = await PersistQueue.add('persist_queue', JSON.stringify(this.productInfo));
+        const retryOptions = { removeOnComplete: true, attempts: 50}
+        const job = await PersistQueue.add('persist_queue', JSON.stringify(this.productInfo), retryOptions);
         logger.info({ src: 'ProductParserService', event: 'JobAddedToPersistQueue', productId: this.productId, url: this.queueItem.url });
     }
 }
