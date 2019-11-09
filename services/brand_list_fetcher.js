@@ -1,17 +1,19 @@
 require('./proxy/proxy.js');
+const fs = require('fs');
+const path = require('path');
+const s3 = require('./../config/aws_s3_client');
 const logger = require('../config/logger');
 const Crawler = require('simplecrawler');
 const ProductParserService = require('./product_parser_service');
-const {generateRandomTill, sleep} = require('./utils')
-const path = require('path');
-const {SocksAgent, checkNewCircuitIp, recreateCircuit} = require('./proxy');
+const { generateRandomTill, sleep } = require('./utils')
+const { SocksAgent, checkNewCircuitIp, recreateCircuit } = require('./proxy');
 
 const isBrandPageOrAllProductsPage = (fetcherService) => {
 
     return (url) => {
         const isValid = (isBrandPage(url, fetcherService) || (isAllProductsPage(url) || (isProductPage(url))));
         if (isValid) {
-            logger.info({event: 'isBrandPageOrAllProductsPage', path: url.path, added: isValid})
+            logger.info({ event: 'isBrandPageOrAllProductsPage', path: url.path, added: isValid })
         }
         return isValid;
     }
@@ -23,7 +25,7 @@ const isBrandPage = (url, fetcherService) => {
     if (isValid) {
         let allProductsUrl = url.protocol + '://' + url.host + url.uriPath + '/all';
         fetcherService.addToCrawlerQueue(allProductsUrl)
-        logger.debug({path: url.path, isBrandPage: isValid})
+        logger.debug({ path: url.path, isBrandPage: isValid })
     }
 
     return isValid;
@@ -33,7 +35,7 @@ const isAllProductsPage = (url) => {
     const regexp = /(^\/brand\/(\w|-)+(\/all)$)/;
     const isValid = regexp.test(url.path.toString())
     if (isValid) {
-        logger.debug({path: url.path, isAllProductsPage: isValid})
+        logger.debug({ path: url.path, isAllProductsPage: isValid })
     }
     return isValid
 }
@@ -43,14 +45,14 @@ const isProductPage = (url) => {
 
     const isValid = regexp.test(url.path.toString());
     if (isValid) {
-        logger.debug({event: 'isProductPage', path: url.path, isProductPage: isValid})
+        logger.debug({ event: 'isProductPage', path: url.path, isProductPage: isValid })
     }
     return isValid;
 }
 
 const onFetchComplete = async (queueItem, responseBuffer, response) => {
 
-    logger.info({event: 'fetchComplete', path: queueItem.path});
+    logger.info({ event: 'fetchComplete', path: queueItem.path });
     if (isProductPage(queueItem)) {
         let parserService = new ProductParserService(responseBuffer.toString(), queueItem);
         await parserService.invoke();
@@ -59,7 +61,7 @@ const onFetchComplete = async (queueItem, responseBuffer, response) => {
 
 const onDiscoveryComplete = (queueItem, resources) => {
 
-    logger.debug({event: 'onDiscoveryComplete', queueItems: queueItem})
+    logger.debug({ event: 'onDiscoveryComplete', queueItems: queueItem })
 }
 
 const getUserAgentString = () => {
@@ -81,12 +83,13 @@ class BrandListFetcher {
     constructor(defaultStartUri) {
         this.defaultStartUri = defaultStartUri;
         this.crawler = Crawler(this.defaultStartUri);
-        this.queueFilePath = process.env.QUEUE_FILE_PATH
+        this.queueFilePath = path.join(__dirname, '..', 'sephora-fetch-queue')
     }
 
     async invoke() {
         this.initializeCrawlerSettings();
         this.setFetchConditions();
+        await this.downloadFromS3();
         await this.enableQueueFromLastFetch();
         this.crawler.start();
     }
@@ -105,11 +108,11 @@ class BrandListFetcher {
         this.crawler.on('fetchcomplete', onFetchComplete)
         this.crawler.on('discoverycomplete', onDiscoveryComplete)
         this.crawler.on('fetchdisallowed', (queueItem) => {
-            logger.error({src: 'BrandListFetcher', event: 'fetchDisallowed', queueItem: queueItem})
+            logger.error({ src: 'BrandListFetcher', event: 'fetchDisallowed', queueItem: queueItem })
         });
 
         this.crawler.on('fetchclienterror', (queueItem, error) => {
-            logger.error({src: 'BrandListFetcher', event: 'fetchclienterror', queueItem: queueItem, error: error});
+            logger.error({ src: 'BrandListFetcher', event: 'fetchclienterror', queueItem: queueItem, error: error });
         })
 
         this.crawler.on('fetcherror', async (queueItem, error) => {
@@ -126,7 +129,7 @@ class BrandListFetcher {
                 let sleepDelay = 10
                 await recreateCircuit();
                 await checkNewCircuitIp();
-                logger.info({event: `sleeping for ${sleepDelay} seconds`})
+                logger.info({ event: `sleeping for ${sleepDelay} seconds` })
                 await sleep(sleepDelay);
                 await this.addToCrawlerQueue(queueItem.url, true);
                 continueCrawl();
@@ -134,62 +137,63 @@ class BrandListFetcher {
         })
 
         this.crawler.on('complete', () => {
-            logger.info({src: 'BrandListFetcher', event: 'complete'})
+            logger.info({ src: 'BrandListFetcher', event: 'complete' })
         })
 
         this.crawler.on('fetchtimeout', (queueItem, timeout) => {
-            logger.error({event: 'fetchtimeout', queueUrl: queueItem.url, timeout: timeout})
+            logger.error({ event: 'fetchtimeout', queueUrl: queueItem.url, timeout: timeout })
         })
 
         this.crawler.on('fetchstart', (q, e) => {
         })
 
         this.crawler.on('fetchclienterror', (queueItem, error) => {
-            logger.error({event: 'fetchclienterror', queueUrl: queueItem.url, error: error})
+            logger.error({ event: 'fetchclienterror', queueUrl: queueItem.url, error: error })
         })
 
         this.crawler.on('queueerror', (queueItem, error) => {
-            logger.error({event: 'queueerror', queueUrl: queueItem.url})
+            logger.error({ event: 'queueerror', queueUrl: queueItem.url })
         })
 
         this.crawler.on('downloadconditionerror', (queueItem, error) => {
-            logger.error({event: 'downloadconditionerror', queueUrl: queueItem.url})
+            logger.error({ event: 'downloadconditionerror', queueUrl: queueItem.url })
         })
 
         this.crawler.on('fetchdisallowed', (queueItem, error) => {
-            logger.error({event: 'fetchdisallowed', queueUrl: queueItem.url})
+            logger.error({ event: 'fetchdisallowed', queueUrl: queueItem.url })
         })
 
         this.crawler.on('fetchheaders', (q, response) => {
         })
 
         this.crawler.on('queueadd', (queueItem, referrer) => {
-            logger.debug({event: 'queueItemAdded', queueUrl: queueItem.url, referrer: referrer});
+            logger.debug({ event: 'queueItemAdded', queueUrl: queueItem.url, referrer: referrer });
         })
 
         this.crawler.on('queueduplicate', (queueItem) => {
-            logger.error({event: 'queueduplicate', queueUrl: queueItem.url});
+            logger.error({ event: 'queueduplicate', queueUrl: queueItem.url });
         })
 
         this.crawler.on('queueerror', (error, queueItem) => {
-            logger.error({event: 'queueerror', queueUrl: queueItem.url, error: error});
+            logger.error({ event: 'queueerror', queueUrl: queueItem.url, error: error });
         })
 
         this.crawler.on('fetchredirect', (queueItem, redirectedQueueItem, response) => {
-            logger.error({event: 'fetchredirect', queueUrl: queueItem.url, redirectedUrl: redirectedQueueItem.url});
+            logger.error({ event: 'fetchredirect', queueUrl: queueItem.url, redirectedUrl: redirectedQueueItem.url });
         })
 
         this.crawler.on('fetch404', (queueItem, r) => {
-            logger.error({event: 'fetch404', queueUrl: queueItem.url});
+            logger.error({ event: 'fetch404', queueUrl: queueItem.url });
         })
 
         this.crawler.on('fetchprevented', (queueItem, error) => {
-            logger.debug({event: 'fetchPrevented', queueItem: queueItem.url})
+            logger.debug({ event: 'fetchPrevented', queueItem: queueItem.url })
         })
     }
 
     async enableQueueFromLastFetch() {
-        this.crawler.queue.defrost(this.queueFilePath, (error) => {
+
+        this.crawler.queue.defrost(this.queueFilePath, (error) => {            
 
             if (error) {
                 logger.error({
@@ -217,7 +221,7 @@ class BrandListFetcher {
 
         let queuedStatus = this.crawler.queueURL(url, url, force)
         if (queuedStatus) {
-            logger.info({event: 'addToCrawlerQueue', path: url.toString()});
+            logger.info({ event: 'addToCrawlerQueue', path: url.toString() });
         } else {
             throw new Error(`Could not add to queue URL ${url.path}`);
         }
@@ -226,18 +230,81 @@ class BrandListFetcher {
     }
 
     async freezeQueue() {
-        console.log('freezeQueue called');
+        logger.info({ event: 'freezeQueue' });
 
-        this.crawler.queue.freeze(this.queueFilePath, (error) => {
-            console.log('error status', error);
+        let continueCrawl = this.crawler.wait();
 
-            if (error) {
-                logger.error({src: 'BrandListFetcher', event: 'freezeQueue', error: error})
-
-            } else {
-                logger.info({src: 'BrandListFetcher', event: 'freezeQueue', msg: 'Saved queue successfully.'})
+        // Re-queue in-progress items before freezing...
+        this.crawler.queue.forEach(function (item) {
+            if (item.fetched !== true) {
+                item.status = "queued";
             }
-        })
+        });
+
+        fs.writeFileSync(this.queueFilePath, JSON.stringify(this.crawler.queue, null, 2));
+    }
+
+    async uploadToS3() {
+        const filePath = this.queueFilePath;
+
+        if (!fs.existsSync(filePath)) {
+            logger.error({ src: 'BrandListFetcher', event: 'uploadToS3', message: 'File to upload does not exist.' })
+            return;
+        }
+
+        const fileContentsBuffer = fs.readFileSync(filePath);       
+
+        const uploadParams = {
+            Bucket: process.env.S3_QUEUE_BUCKET_NAME,
+            Key: 'sephora-fetch-queue',
+            Body: fileContentsBuffer,
+            ContentType: 'json'
+        }
+
+        try {
+            const uploadStatus = await s3.putObject(uploadParams).promise()
+            logger.info({ src: 'BrandListFetcher', event: 'uploadToS3', message: 'success' })
+        } catch (e) {
+            logger.error({ src: 'BrandListFetcher', event: 'uploadToS3', message: e.code, error: e })
+            return;
+        }
+    }
+
+    async downloadFromS3() {
+        const filePath = this.queueFilePath;
+        const getParams = {
+            Bucket: process.env.S3_QUEUE_BUCKET_NAME,
+            Key: 'sephora-fetch-queue'
+        }
+
+        try {
+            const fileExists = await s3.headObject(getParams).promise();
+            return (new Promise((resolve, reject) => {
+                const localFileWriteStream = fs.createWriteStream(filePath);
+                const s3ReadStream = s3.getObject(getParams).createReadStream();
+                s3ReadStream.pipe(localFileWriteStream);
+                
+                localFileWriteStream.on('error', (error) => {
+                    logger.error({ src: 'BrandListFetcher', event: 'downloadFromS3', code: error.message })    
+                    reject(error);
+                })
+
+                localFileWriteStream.on('close', () => {
+                    logger.info({ src: 'BrandListFetcher', event: 'downloadFromS3', message: 'success' })    
+                    resolve(filePath);
+                })
+
+                s3ReadStream.on('error', (error) => {
+                    logger.error({ src: 'BrandListFetcher', event: 'downloadFromS3', code: `S3ReadStreamError: ${error.message}`})    
+                    reject(error);
+                })
+
+                logger.info({ src: 'BrandListFetcher', event: 'downloadFromS3', message: 'success' })
+            }))
+        } catch (e) {            
+            logger.error({ src: 'BrandListFetcher', event: 'downloadFromS3', message: `${e.code}: file does not exist.`, error: e })
+            return;
+        }
     }
 }
 

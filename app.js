@@ -7,6 +7,7 @@ let service = new BrandListFetcherService(process.env.BASE_CRAWL_URL);
 const freezeCrawlerQueueAndExit = async () => {
     logger.info('term signal received');
     let freezeStatus = await service.freezeQueue();
+    await service.uploadToS3();
 
     setTimeout(() => {
         logger.info('Shutting down.')
