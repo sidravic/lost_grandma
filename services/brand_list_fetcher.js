@@ -13,7 +13,7 @@ const isBrandPageOrAllProductsPage = (fetcherService) => {
     return (url) => {
         const isValid = (isBrandPage(url, fetcherService) || (isAllProductsPage(url) || (isProductPage(url))));
         if (isValid) {
-            logger.info({ event: 'isBrandPageOrAllProductsPage', path: url.path, added: isValid })
+            logger.info({ event: 'isBrandPageOrAllProductsPage', path: url.path.toString(), added: isValid })
         }
         return isValid;
     }
@@ -120,7 +120,7 @@ class BrandListFetcher {
             logger.error({
                 src: 'BrandListFetcher',
                 event: 'fetcherror',
-                queueUrl: queueItem.url,
+                queueUrl: queueItem.url.toString(),
                 statusCode: error.statusCode,
                 error: error
             });
@@ -141,53 +141,53 @@ class BrandListFetcher {
         })
 
         this.crawler.on('fetchtimeout', (queueItem, timeout) => {
-            logger.error({ event: 'fetchtimeout', queueUrl: queueItem.url, timeout: timeout })
+            logger.error({ event: 'fetchtimeout', queueUrl: queueItem.url.toString(), timeout: timeout })
         })
 
         this.crawler.on('fetchstart', (q, e) => {
         })
 
         this.crawler.on('fetchclienterror', (queueItem, error) => {
-            logger.error({ event: 'fetchclienterror', queueUrl: queueItem.url, error: error })
+            logger.error({ event: 'fetchclienterror', queueUrl: queueItem.url.toString(), error: error })
         })
 
         this.crawler.on('queueerror', (queueItem, error) => {
-            logger.error({ event: 'queueerror', queueUrl: queueItem.url })
+            logger.error({ event: 'queueerror', queueUrl: queueItem.url.toString() })
         })
 
         this.crawler.on('downloadconditionerror', (queueItem, error) => {
-            logger.error({ event: 'downloadconditionerror', queueUrl: queueItem.url })
+            logger.error({ event: 'downloadconditionerror', queueUrl: queueItem.url.toString() })
         })
 
         this.crawler.on('fetchdisallowed', (queueItem, error) => {
-            logger.error({ event: 'fetchdisallowed', queueUrl: queueItem.url })
+            logger.error({ event: 'fetchdisallowed', queueUrl: queueItem.url.toString() })
         })
 
         this.crawler.on('fetchheaders', (q, response) => {
         })
 
         this.crawler.on('queueadd', (queueItem, referrer) => {
-            logger.debug({ event: 'queueItemAdded', queueUrl: queueItem.url, referrer: referrer });
+            logger.debug({ event: 'queueItemAdded', queueUrl: queueItem.url.toString(), referrer: referrer });
         })
 
         this.crawler.on('queueduplicate', (queueItem) => {
-            logger.error({ event: 'queueduplicate', queueUrl: queueItem.url });
+            logger.error({ event: 'queueduplicate', queueUrl: queueItem.url.toString() });
         })
 
         this.crawler.on('queueerror', (error, queueItem) => {
-            logger.error({ event: 'queueerror', queueUrl: queueItem.url, error: error });
+            logger.error({ event: 'queueerror', queueUrl: queueItem.url.toString(), error: error });
         })
 
         this.crawler.on('fetchredirect', (queueItem, redirectedQueueItem, response) => {
-            logger.error({ event: 'fetchredirect', queueUrl: queueItem.url, redirectedUrl: redirectedQueueItem.url });
+            logger.error({ event: 'fetchredirect', queueUrl: queueItem.url.toString(), redirectedUrl: redirectedQueueItem.url.toString() });
         })
 
         this.crawler.on('fetch404', (queueItem, r) => {
-            logger.error({ event: 'fetch404', queueUrl: queueItem.url });
+            logger.error({ event: 'fetch404', queueUrl: queueItem.url.toString() });
         })
 
         this.crawler.on('fetchprevented', (queueItem, error) => {
-            logger.debug({ event: 'fetchPrevented', queueItem: queueItem.url })
+            logger.debug({ event: 'fetchPrevented', queueItem: queueItem.url.toString() })
         })
     }
 

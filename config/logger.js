@@ -50,7 +50,7 @@ const logger = winston.createLogger({
 });
 
 process.on('uncaughtException', (err) => {
-    logger.error({event: 'uncaughtException', message: err.message, stack: err.stack })
+    logger.error({event: 'uncaughtException', msg: err.message, stack: err.stack })
 })
 
 logger.info({status: 'Logger started111.'});
