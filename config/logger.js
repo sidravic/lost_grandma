@@ -9,7 +9,7 @@ const getTransports = () => {
         }),
     ];
 
-    if (process.env.NODE_ENV == 'development') {
+    if (process.env.NODE_ENV == 'staging' || process.env.NODE_ENV == 'development') {
         let logstashTransport = new LogstashTransport({
             host: process.env.LOGSTASH_HOST,
             port: process.env.LOGSTASH_UDP_PORT
