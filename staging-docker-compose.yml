@@ -1,0 +1,69 @@
+version: '3'
+services:
+  lost_grandma:
+    depends_on:
+      - tor
+    build: .
+    image: ${LOST_GRANDMA_IMAGE_ID}
+    env_file:
+      - staging.env
+    networks:
+      - core-infra
+    command: ['./launch.sh']
+    deploy:
+      restart_policy:
+        condition: on-failure
+        delay: 5s
+        max_attempts: 10
+        window: 180s
+      placement:
+        constraints:
+          - node.labels.stateless == true
+  worker:
+    depends_on:
+      - tor
+    build: .
+    image: ${LOST_GRANDMA_IMAGE_ID}
+    env_file:
+      - staging.env
+    networks:
+      - core-infra
+    command: ["./launch_workers.sh"]
+    deploy:
+      restart_policy:
+        condition: on-failure
+        delay: 5s
+        max_attempts: 100
+        window: 180s      
+      placement:
+        constraints:
+          - node.labels.stateless == true
+  tor:
+    networks:
+      - core-infra
+    build:
+      context: ./scripts/tor
+      dockerfile: Dockerfile
+    image: ${TOR_IMAGE_ID}
+    expose:
+      - 9050
+      - 9080
+      - 9051
+    ports:
+      - "9050:9050"
+      - "9051:9051"
+      - "9080:9080"
+    command: ["./launch_tor.sh"]
+    deploy:
+      restart_policy:
+        condition: on-failure
+        delay: 5s
+        max_attempts: 10
+        window: 180s
+      placement:
+        constraints:
+          - node.labels.stateless == true
+  
+networks:  
+  core-infra:
+    external: true

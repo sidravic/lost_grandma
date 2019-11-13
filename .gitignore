@@ -9,4 +9,5 @@ local_development.env
 .history
 sephora-fetch-queue.*
 stack-development.env
+staging.env
 
