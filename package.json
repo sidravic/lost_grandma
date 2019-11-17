@@ -18,6 +18,7 @@
     "bull-arena": "^2.6.4",
     "cheerio": "^1.0.0-rc.3",
     "express": "^4.17.1",
+    "he": "^1.2.0",
     "http-proxy-agent": "^2.1.0",
     "https-proxy-agent": "^3.0.0",
     "pg": "^7.12.1",

@@ -297,9 +297,7 @@ class BrandListFetcher {
                 s3ReadStream.on('error', (error) => {
                     logger.error({ src: 'BrandListFetcher', event: 'downloadFromS3', code: `S3ReadStreamError: ${error.message}`})    
                     reject(error);
-                })
-
-                logger.info({ src: 'BrandListFetcher', event: 'downloadFromS3', message: 'success' })
+                })                
             }))
         } catch (e) {            
             logger.error({ src: 'BrandListFetcher', event: 'downloadFromS3', message: `${e.code}: file does not exist.`, error: e })
