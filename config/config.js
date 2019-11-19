@@ -3,12 +3,12 @@ module.exports = {
       url: process.env.DB_URL,
       database: process.env.DB_NAME,    
       dialect: "postgres",
-      operatorAliases: false
+      operatorAliases: true
     },
     staging:{
       url: process.env.DB_URL,
       database: process.env.DB_NAME,    
       dialect: "postgres",
-      operatorAliases: false
+      operatorAliases: true
     }
 }

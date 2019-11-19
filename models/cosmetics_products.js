@@ -30,6 +30,7 @@ class Product extends Sequelize.Model {
         this.belongsTo(models.Brand, {foreignKey: 'cosmetics_brand_id'})
         this.hasOne(models.Review, {targetKey: 'cosmetics_product_id', sourceKey: 'id', foreignKey: 'cosmetics_product_id'})
         this.hasMany(models.Source, { foreignKey: 'id', targetKey: 'sourceable_id'})
+        this.hasMany(models.Image, {foreignKey: 'cosmetics_product_id'})
     }
 
     asJSON(){

@@ -9,6 +9,8 @@ class Image extends Sequelize.Model {
       image_url: { type: Sequelize.STRING, allowNull: false, unique: true  },
       cosmetics_product_id: { type: Sequelize.UUID, allowNull: false},
       cosmetics_brand_id: {type: Sequelize.UUID, allowNull: false},
+      s3_image_url: {type: Sequelize.STRING, allowNull: true },
+      azure_image_url: {type: Sequelize.STRING, allowNull: true},
       createdAt: Sequelize.DATE,
       updatedAt: Sequelize.DATE
     }, {
@@ -19,7 +21,7 @@ class Image extends Sequelize.Model {
   }
 
   static associate(models){
-    this.belongsTo(models.Product, {foreignKey: 'cosmetics_product_id', targetKey: 'id'})
+    this.belongsTo(models.Product, {foreignKey: 'cosmetics_product_id', targetKey: 'id', sourceKey: 'cosmetics_product_id'})
     this.belongsTo(models.Brand, {foreignKey: 'cosmetics_brand_id', targetKey: 'id'})
   }
 }
