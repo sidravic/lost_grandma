@@ -1,6 +1,6 @@
 const redisClient = require('./../../config/redis_client');
 const logger = require('./../../config/logger');
-logger.defaultMeta.service = 'sephora-worker'
+logger.defaultMeta.service = 'upload-to-s3-queue-worker'
 
 const { UploadToS3Queue, UploadToS3QueueWorker } = require('./upload_to_s3_queue');
 const { DailyTriggerUploadToS3Queue, DailyTriggerUploadToS3QueueWorker } = require('./daily_trigger_upload_to_s3_queue');

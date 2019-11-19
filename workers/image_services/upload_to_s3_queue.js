@@ -24,7 +24,7 @@ const UploadToS3QueueWorker = async (job, done) => {
     const downloadableImagePayload = JSON.parse(data);
     const service = new CoordinatorService();
     try {
-        const uploadStatus = await service.saveToS3(downloadableImagePayload)
+        const uploadStatus = await service.invoke(downloadableImagePayload)
 
         logger.info({
             src: 'UploadToS3QueueWorker', event: 'completed',

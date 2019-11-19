@@ -23,6 +23,7 @@ class Image extends Sequelize.Model {
   static associate(models){
     this.belongsTo(models.Product, {foreignKey: 'cosmetics_product_id', targetKey: 'id', sourceKey: 'cosmetics_product_id'})
     this.belongsTo(models.Brand, {foreignKey: 'cosmetics_brand_id', targetKey: 'id'})
+    this.hasMany(models.ImageLabel, {foreignKey: 'cosmetics_image_id'})
   }
 }
 

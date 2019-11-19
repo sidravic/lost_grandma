@@ -94,7 +94,7 @@ class CoordinatorService extends BaseService {
         this.downloadableImagePayload = null;        
     }
 
-    async invoke() {        
+    async batch() {        
         await this.fetchProductsInBatches();
     }
 
@@ -116,7 +116,7 @@ class CoordinatorService extends BaseService {
         findInBatches(Product, 1000, onEachBatch, options)
     }
 
-    async saveToS3(downloadableImagePayload) {
+    async invoke(downloadableImagePayload) {
         try {    
             this.downloadableImagePayload = downloadableImagePayload;
 
@@ -152,4 +152,4 @@ class CoordinatorServiceResponse extends BaseServiceResponse {
 
 module.exports = CoordinatorService;
 
-//new CoordinatorService().invoke();
+new CoordinatorService().invoke();
