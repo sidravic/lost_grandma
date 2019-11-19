@@ -38,6 +38,44 @@ services:
       placement:
         constraints:
           - node.labels.stateless == true
+  image_uploader:
+    depends_on:
+      - tor
+    build: .
+    image: ${LOST_GRANDMA_IMAGE_ID}
+    env_file:
+      - staging.env
+    networks:
+      - core-infra
+    command: ["./launch_workers.sh"]
+    deploy:
+      restart_policy:
+        condition: on-failure
+        delay: 5s
+        max_attempts: 100
+        window: 180s      
+      placement:
+        constraints:
+          - node.labels.stateless == true
+          worker:
+            depends_on:
+              - tor
+            build: .
+            image: ${LOST_GRANDMA_IMAGE_ID}
+            env_file:
+              - staging.env
+            networks:
+              - core-infra
+            command: ["./launch_workers.sh"]
+            deploy:
+              restart_policy:
+                condition: on-failure
+                delay: 5s
+                max_attempts: 100
+                window: 180s      
+              placement:
+                constraints:
+                  - node.labels.stateless == true          
   tor:
     networks:
       - core-infra
