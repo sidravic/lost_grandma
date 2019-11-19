@@ -1,18 +1,18 @@
 const fs = require('fs');
 const util = require('util');
 const { any } = require('./../utils')
+const Sequelize = require('sequelize');
 const logger = require('./../../config/logger');
-
-const asyncWriteFile = util.promisify(fs.writeFile);
 const { Brand, Product, Source, Image, Review, ReviewComment, dbConn } = require('./../../models')
 const { findInBatches } = require('../db_operations/find_in_batches');
 const { BaseService, BaseServiceResponse } = require('./../base_service');
-
 const DownloadableProductImages = require('./downloadable_product_images');
-const DownloadImageService = require('./download_image_service');
-const ImageDownloadQueue = require('./../../workers/image_services/image_download_queue').ImageDownloadQueue;
+const { s3StoreObjectFromImageUrl, s3UploadFromInputStream } = require('./s3_operations')
+
 
 const onEachBatch = (products) => {
+
+    const UploadToS3Queue = require('./../../workers/image_services/upload_to_s3_queue').UploadToS3Queue;
     let downloadableProductImages = products.map(product => {
         return (
             DownloadableProductImages.
@@ -20,78 +20,120 @@ const onEachBatch = (products) => {
                 asJSON())
     })
     downloadableProductImages.map(async (dpi, index) => {
-        const retryOptions = { removeOnComplete: true, attempts: 50 }
-        const job = await ImageDownloadQueue.add('image_download_queue', JSON.stringify(dpi), retryOptions);
+        const retryOptions = { removeOnComplete: true, attempts: 50 }        
+        const job = await UploadToS3Queue.add('upload_to_s3_queue', JSON.stringify(dpi), retryOptions);
         logger.info({ src: 'Coordinator', event: 'ImageAddedToDownloadQueue', data: { downloadImagePayload: dpi } });
     });
 }
 
-const createFolder = (folderName) => {
-    const path = `/home/sidravic/Dropbox/code/workspace/rails_apps/idylmynds/sephora_crawler/download_images/${folderName}`;
-    if (fs.existsSync(path)) {
-        logger.info({ src: 'Coordinator', event: 'createFolder', data: { status: 'folder already exists', path: path } })
-        return path
-    }
+const uploadImagesToS3AndPersist = async (downloadableImagePayload, service) => {
+    const imageUrls = downloadableImagePayload.imageUrls;
+    const folderName = downloadableImagePayload.folderName;
+    const imageUrlToId = downloadableImagePayload.imageUrlToId;    
+    const bucketName = process.env.S3_IMAGES_BUCKET_NAME;    
 
-    fs.mkdirSync(path);
-    logger.info({ src: 'Coordinator', event: 'createFolder', data: { status: 'success', path: path } })
-    return path;
-}
-
-const downloadImage = async (imageUrls, path, folderName) => {
-    return Promise.all(imageUrls.map(async (imageUrl, index) => {
-        let fileName = (index + 1).toString()
-        let fileDestinationPath = `${path}/${fileName}.jpg`
-        let service = new DownloadImageService(imageUrl, fileDestinationPath)
-        let downloadServiceResponse = await service.invoke();
-        logger.info({ event: 'downloadImages', src: 'Coordinator', data: { folderName: folderName, status: 'complete' } })
-        return downloadServiceResponse;
+    return Promise.all(imageUrls.map(async (imageUrl, _index) => {
+       
+        let fileName = imageUrl.split('/').slice(-1).pop();
+        let s3ObjectPath = `${bucketName}/${folderName}/${fileName}`
+       
+        try {
+            let uploadStatus = await s3StoreObjectFromImageUrl(s3ObjectPath, imageUrl)
+            logger.info({ event: 'downloadImages', src: 'Coordinator', data: { folderName: folderName, status: 'complete' } })
+            const persistStatus = await persistS3Url(uploadStatus, imageUrl, imageUrlToId, service);
+            uploadStatus.persisStatus = persistStatus;
+            service.uploadStatus = uploadStatus;
+            return uploadStatus;
+        } catch (e) {
+            service.addErrors([e.message])
+            service.errorCode = 'error_uploading_images_to_s3';
+            logger.error({ event: 'downloadImages', src: 'Coordinator', data: { imageUrl: imageUrl, status: 'error' }, error: { message: e.message, stack: e.stack } })
+            
+        }        
     }))
 }
 
-const createMetadataFile = async (downloadImagePayload, folderPath) => {
-    const filePath = `${folderPath}/metadata.json`
-    await asyncWriteFile(filePath, downloadImagePayload)
-    logger.info({ src: 'Coordinator', event: 'createMetaDataFile', data: { status: 'success', path: filePath } })
+const persistS3Url = async(uploadStatus, imageUrl, imageUrlToId, service) => {
+   
+    const imageId = imageUrlToId[imageUrl];
+    try {                
+        const persistStatus = await Image.update({s3_image_url: uploadStatus.Location.toString()}, {where: {id: imageId}})        
+        logger.info({ event: 'persistS3Url', src: 'Coordinator', data: { imageUrl: imageUrl, status: 'completed' }})
+        return persistStatus;
+    } catch(e){
+        logger.error({ event: 'persistS3Url', src: 'Coordinator', data: { imageUrl: imageUrl, status: 'error' }, error: {message: e.message, stack: e.stack }})
+        service.addErrors([e.message]);
+        service.errorCode('error_persist_s3_url');
+    }
+}
+
+const createMetadataFile = async (downloadableImagePayload,  service) => {
+
+    const bucketName = process.env.S3_IMAGES_BUCKET_NAME;
+    const folderName = downloadableImagePayload.folderName;
+    const s3ObjectPath = `${bucketName}/${folderName}/metadata.json`
+    
+    try {
+        const metadataUploadStatus = await s3UploadFromInputStream(JSON.stringify(downloadableImagePayload), s3ObjectPath);
+        logger.info({ src: 'Coordinator', event: 'createMetaDataFile', data: { status: 'success', path: s3ObjectPath } })
+        this.metadataUploadStatus = metadataUploadStatus;
+        return metadataUploadStatus;
+    } catch(e) {
+        logger.info({ src: 'Coordinator', event: 'createMetaDataFile', data: { status: 'success', path: s3ObjectPath } })
+        service.addErrors([e.message]);
+        service.errorCode('error_uploading_metadata.json');
+    }    
 }
 
 class CoordinatorService extends BaseService {
     constructor() {
         super();
+
+        this.uploadStatus = null;
+        this.metadataUploadStatus = null;
+        this.downloadableImagePayload = null;        
     }
 
-    async invoke() {
+    async invoke() {        
         await this.fetchProductsInBatches();
     }
 
     async fetchProductsInBatches() {
-        const options = { includedModels: [Image, Brand] }
-        findInBatches(Product, 1, onEachBatch, options)
+        const op = Sequelize.Op;        
+        const options = {
+            includedModels: [
+                {
+                    model: Image,
+                    required: true,
+                    where: { s3_image_url: { [op.is]: null } }
+                },
+                {
+                    model: Brand,
+                    required: true
+                }
+            ]
+        }
+        findInBatches(Product, 1000, onEachBatch, options)
     }
 
-    async downloadImage(downloadableImagePayload) {
-        try {
-            let folderPath = createFolder(downloadableImagePayload.folderName);
-            debugger;
-            let downloadStatuses = await downloadImage(downloadableImagePayload.imageUrls, folderPath, downloadableImagePayload.folderName)
-            let downloadErrors = downloadStatuses.map((status) => { return status.errors })
-            
-            if (any(downloadErrors)) {
-                this.errorCode = 'error_coordinator_image_download'
-            }
+    async saveToS3(downloadableImagePayload) {
+        try {    
+            this.downloadableImagePayload = downloadableImagePayload;
 
-            let coordinatorResponse = new CoordinatorServiceResponse(downloadErrors, this.errorCode, folderPath, downloadStatuses);
-            await createMetadataFile(downloadableImagePayload, folderPath);
-            return (new Promise((resolve, reject) => { resolve(folderPath, coordinatorResponse) }));
+            await uploadImagesToS3AndPersist(downloadableImagePayload, this)            
+            await createMetadataFile(downloadableImagePayload, this);
+            
+            const coordinatorResponse = new CoordinatorServiceResponse(this.errors, this.errorCode, 
+                this.downloadableImagePayload, this.uploadStatus, this.metadataUploadStatus)
+            return (new Promise((resolve, reject) => { resolve(coordinatorResponse) }));
         } catch (e) {
-            debugger;
             logger.error({
                 event: 'downloadImage', src: 'Coordinator',
-                data: { folderName: downloadableImagePayload.folderName },
+                data: { folderName: downloadableImagePayload },
                 error: { message: e.message, stack: e.stack }
             })
             
-            let coordinatorResponse = new CoordinatorServiceResponse([e.message], 'exception_coordinator_image_download', downloadableImagePayload.folderName, null);
+            let coordinatorResponse = new CoordinatorServiceResponse([e.message], 'exception_coordinator_image_download', downloadableImagePayload, null, null);
             return (new Promise((resolve, reject) => { reject(e); }));
         }
 
@@ -99,13 +141,15 @@ class CoordinatorService extends BaseService {
 }
 
 class CoordinatorServiceResponse extends BaseServiceResponse {
-    constructor(errors, errorCode, folderName, downloadStatuses) {
+    constructor(errors, errorCode, downloadableImagePayload, uploadStatus, metadataUploadStatus) {
         super(errors, errorCode);
-        this.folderName = folderName;
-        this.downloadStatuses = downloadStatuses;
+        this.uploadStatus = uploadStatus;
+        this.metadataUploadStatus = metadataUploadStatus;
+        this.downloadableImagePayload = downloadableImagePayload
     }
 }
 
 
 module.exports = CoordinatorService;
-// new CoordinatorService().invoke();
+
+//new CoordinatorService().invoke();

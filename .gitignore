@@ -10,4 +10,5 @@ local_development.env
 sephora-fetch-queue.*
 stack-development.env
 staging.env
+download_images
 

@@ -12,7 +12,7 @@ const sequelize = new Sequelize(process.env.DB_URL, {
 })
 
 const verifyConnection = async () => {
-    await sequelize.authenticate()
+    await sequelize.authenticate();
 }
 
 verifyConnection();

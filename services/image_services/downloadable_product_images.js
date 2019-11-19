@@ -11,6 +11,12 @@ const getImageUrls = (product) => {
     return imageUrls;
 }
 
+const getImageUrlToId = (product) => {
+    let imageUrlToId = {}
+    product.Images.map((image) => {  imageUrlToId[image.image_url.toString()] = image.id; return; })    
+    return imageUrlToId;
+}
+
 class DownloadableProductImages {
     constructor(productObject) {
         Object.assign(this, productObject)
@@ -19,6 +25,7 @@ class DownloadableProductImages {
     static fromProduct(product) {
         let imageUrls = getImageUrls(product)
         let brandName = sanitizeString(product.Brand.name)
+        let imageUrlToId = getImageUrlToId(product);
 
         const productObject = {
             productId: product.id,
@@ -26,6 +33,7 @@ class DownloadableProductImages {
             brandId: product.cosmetics_brand_id,
             brandName: brandName,
             imageUrls: imageUrls,
+            imageUrlToId: imageUrlToId,
             imageCount: imageUrls.length,
             folderName: `${product.id}_${sanitizedProductName(product.name)}_${sanitizedProductName(brandName)}`,
             categories: product.categories['classification']
@@ -47,7 +55,8 @@ class DownloadableProductImages {
             imageUrls: this.imageUrls,
             imageCount: this.imageCount,
             folderName: this.folderName,
-            categories: this.categories
+            categories: this.categories,
+            imageUrlToId: this.imageUrlToId
         }
     }
 }
