@@ -1,6 +1,6 @@
 const he = require('he');
 const sanitizeString = (word) => {
-    return he.decode(word)
+    return he.decode(word).normalize('NFD').replace(/[\u0300-\u036f]/g, "")
 }
 const sanitizedProductName = (word) => {
     return sanitizeString(word).toLowerCase().split(' ').join('-')
