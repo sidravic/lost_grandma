@@ -10,6 +10,7 @@ const UploadToS3Queue = new Bull('upload_to_s3_queue', redisUrl, {
 
 // Avoid circular dependency loading problems
 const CoordinatorService = require('../../services/image_services/coordinator');
+const LabelDetectionCoordinatorService = require('./../../services/label_detection_services/coordinator');
 
 /**
  * The service downloads images from the source URLS that point to sephora website and stores the
@@ -23,13 +24,21 @@ const UploadToS3QueueWorker = async (job, done) => {
 
     const downloadableImagePayload = JSON.parse(data);
     const service = new CoordinatorService();
+    const labelDetectionCoordinatorService = new LabelDetectionCoordinatorService();
     try {
-        const uploadStatus = await service.invoke(downloadableImagePayload)
+        const coordinatorResponse = await service.invoke(downloadableImagePayload)
 
         logger.info({
             src: 'UploadToS3QueueWorker', event: 'completed',
-            data: { job: job.id, status: uploadStatus }
+            data: { job: job.id, status: coordinatorResponse }
         })
+        
+        const imageUrlToId = coordinatorResponse.downloadableImagePayload.imageUrlToId;
+        imageIds = Object.values(imageUrlToId);
+        
+        Promise.all(imageIds.map(async (imageId) => { 
+            await labelDetectionCoordinatorService.addToQueue(imageId)
+        }))        
         done();
     } catch (e){
         logger.error({

@@ -28,24 +28,6 @@ const s3UploadFromInputStream = async (inputStream, s3ObjectPath) => {
 
 
  let bucketName = process.env.S3_IMAGES_BUCKET_NAME
-
- //  let objectPath = `${bucketName}/00a5de76-9dbf-4121-9b24-cb3c7ff883a7_long-wear-cream-shadow-stick_bobbi-brown/1.jpg`
-// storeObjectFromImageUrl(objectPath, 'https://www.sephora.com/asd/sku/s2175016-main-Lhero.jpg').then((r) => {
-//     debugger;
-//     console.log(r);
-// })
-
-// let x = {
-//     "productId": "00a5de76-9dbf-4121-9b24-cb3c7ff883a7",
-//     "productName": "Long-Wear Cream Shadow Stick",
-//     "brandName": "Bobbi Brown",
-//     "brandId": "5490a77a-fff7-493b-9add-d6852cf0ef9d",
-//     "imageUrls": ["https://www.sephora.com/productimages/sku/s1484989-main-Lhero.jpg"], "imageCount": 1, "folderName": "00a5de76-9dbf-4121-9b24-cb3c7ff883a7_long-wear-cream-shadow-stick_bobbi-brown",
-//     "categories": ["Makeup", "Eye"]
-// }
-
-// let objectPath = `${bucketName}/00a5de76-9dbf-4121-9b24-cb3c7ff883a7_long-wear-cream-shadow-stick_bobbi-brown/metadata.json`
-// uploadFromInputStream(JSON.stringify(x), objectPath).then((r) =>  console.log(r));
-
+ 
 module.exports.s3StoreObjectFromImageUrl = s3StoreObjectFromImageUrl;
 module.exports.s3UploadFromInputStream = s3UploadFromInputStream;

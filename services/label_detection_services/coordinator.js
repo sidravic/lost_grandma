@@ -41,7 +41,6 @@ const fetchImagesWithoutLabels = () => {
             },
         },
         attributes: ['id', 's3_image_url', 'azure_image_url', 'image_url']
-
     }
     findInBatches(Image, 1000, onEachBatch, options)
 }
@@ -65,7 +64,6 @@ const persistLabels = async (service) => {
     }
     let imageLabels, errors;
 
-
     const detectedLabels = service.detectedLabels;
     const bulkCreateOptions = detectedLabels.map((label) => {
         return {
@@ -87,6 +85,24 @@ const persistLabels = async (service) => {
 
 }
 
+const getImage = async (imageId) => {
+    const op = Sequelize.Op;
+    
+    const [image, error] = await syncError(Image.findOne({
+        where: { id: imageId },
+        attributes: ['id', 's3_image_url', 'azure_image_url', 'image_url'],
+        include: [{
+            model: ImageLabel,
+            required: false,
+            where: {
+                id: { [op.is]: null }
+            },
+            attributes: ['id']
+        }]
+    }))
+    return [image, error];
+}
+
 class Coordinator extends BaseService {
     constructor() {
         super();
@@ -99,21 +115,58 @@ class Coordinator extends BaseService {
         fetchImagesWithoutLabels()
     }
 
-    async invoke(imageBlob) {
-        this.imageBlob = imageBlob;
-        await fetchLabels(this);
-        await persistLabels(this);
+    async addToQueue(imageId) {
 
-        return (new Promise((resolve, reject) => {
-
-            const response = new CoordinatorResponse(this.errors, this.errorCode, this.imageBlob, this.detectedLabels)
-
-            if (this.anyErrors()) {
-                reject(response);
-            } else {
-                resolve(response);
+        try {
+            const [image, error] = await getImage(imageId);
+            
+            if (any(error)) {
+                logger.error({ src: 'Coordinator', event: 'addToQueue', data: { imageId: imageId }, error: { message: error } })
+                return
             }
-        }))
+            
+            if (!image.s3_image_url) {
+                logger.error({ src: 'Coordinator', event: 'addToQueue', data: { imageId: imageId }, error: { message: 's3_image_url not present' } })
+                return
+            }
+
+            if (any(image.ImageLabels)) {
+                logger.error({ src: 'Coordinator', event: 'addToQueue', data: { imageId: imageId }, error: { message: 'image labels already exist' } })
+                return;
+            }
+
+            const LabelDetectionQueue = require('./../../workers/label_detection_services/label_detection_queue').LabelDetectionQueue;
+            let imageBlob = { ...image.dataValues };
+            const retryOptions = { removeOnComplete: true, attempts: 1 };
+            const job = await LabelDetectionQueue.add('label_detection_queue', JSON.stringify(imageBlob), retryOptions)
+            logger.info({ src: 'Coordinator', event: 'addToQueue', data: { imageBlob: imageBlob } });
+            return job;
+        } catch (e) {
+            logger.error({ src: 'Coordinator', event: 'addToQueue', data: { imageId: imageId }, error: { message: e.message, stack: e.stack } })
+            return new Promise((resolve, reject) => { reject(e) });
+        }
+    }
+
+    async invoke(imageBlob) {
+
+        try {
+            this.imageBlob = imageBlob;
+            await fetchLabels(this);
+            await persistLabels(this);
+
+            return (new Promise((resolve, reject) => {
+
+                const response = new CoordinatorResponse(this.errors, this.errorCode, this.imageBlob, this.detectedLabels)
+
+                if (this.anyErrors()) {
+                    reject(response);
+                } else {
+                    resolve(response);
+                }
+            }))
+        } catch(e) {
+            logger.error({ src: 'Coordinator', event: 'invoke', data: {}, error: {message: e.message, stack: e.stack }})
+        }        
     }
 }
 

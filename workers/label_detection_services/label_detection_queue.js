@@ -29,11 +29,11 @@ const LabelDetectionQueueWorker = async (job, done) => {
         logger.info({
             src: 'LabelDetectionQueueWorker', event: 'completed',
             data: { job: job.id, status: response }
-        })
-        debugger;
+        })     
+         
         done();
     } catch (e){
-        debugger;
+        
         logger.error({
             src: 'LabelDetectionQueueWorker', event: 'failed',
             data: { job: job.id, status: 'error' },
