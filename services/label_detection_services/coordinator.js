@@ -21,7 +21,7 @@ const onEachBatch = (images) => {
     })
 }
 
-const fetchImagesWithoutLabels = () => {
+const fetchImagesWithoutLabels = async () => {
 
     const op = Sequelize.Op;
     const options = {
@@ -42,7 +42,8 @@ const fetchImagesWithoutLabels = () => {
         },
         attributes: ['id', 's3_image_url', 'azure_image_url', 'image_url']
     }
-    findInBatches(Image, 1000, onEachBatch, options)
+    await findInBatches(Image, 1000, onEachBatch, options)
+    return;
 }
 
 const fetchLabels = async (service) => {
@@ -169,8 +170,9 @@ class Coordinator extends BaseService {
         this.detectedLabels = [];
     }
 
-    batch() {
-        fetchImagesWithoutLabels()
+    async batch() {
+        await fetchImagesWithoutLabels()
+        return true;
     }
 
     async addToQueue(imageId) {
@@ -205,7 +207,6 @@ class Coordinator extends BaseService {
             return (new Promise((resolve, reject) => {
 
                 const response = new CoordinatorResponse(this.errors, this.errorCode, this.imageBlob, this.detectedLabels)
-                debugger;
                 if (this.anyErrors()) {
                     reject(response);
                 } else {

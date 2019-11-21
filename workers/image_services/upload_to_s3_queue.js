@@ -36,9 +36,13 @@ const UploadToS3QueueWorker = async (job, done) => {
         const imageUrlToId = coordinatorResponse.downloadableImagePayload.imageUrlToId;
         imageIds = Object.values(imageUrlToId);
         
-        Promise.all(imageIds.map(async (imageId) => { 
+        imageIds.map(async (imageId) => {
+            logger.info({
+                src: 'UploadToS3QueueWorker', event: 'addingToLabelDetectionCoordinatorServiceQueue',
+                data: { job: job.id, status: coordinatorResponse }
+            })
             await labelDetectionCoordinatorService.addToQueue(imageId)
-        }))        
+        })
         done();
     } catch (e){
         logger.error({

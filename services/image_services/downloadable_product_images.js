@@ -1,6 +1,11 @@
 const he = require('he');
 const sanitizeString = (word) => {
-    return he.decode(word).normalize('NFD').replace(/[\u0300-\u036f]/g, "")
+    const deaccentedWord = he.decode(word).normalize('NFD').replace(/[\u0300-\u036f]/g, "")
+    const wordWithoutPeriod = deaccentedWord.split(' ')
+                                            .map((word) => {
+                                                return word.replace('.', '');
+                                             }).join(' ');
+    return wordWithoutPeriod;
 }
 const sanitizedProductName = (word) => {
     return sanitizeString(word).toLowerCase().split(' ').join('-')
@@ -35,7 +40,7 @@ class DownloadableProductImages {
             imageUrls: imageUrls,
             imageUrlToId: imageUrlToId,
             imageCount: imageUrls.length,
-            folderName: `${product.id}_${sanitizedProductName(product.name)}_${sanitizedProductName(brandName)}`,
+            folderName: `${product.id}`,
             categories: product.categories['classification']
         }
 
@@ -61,4 +66,6 @@ class DownloadableProductImages {
     }
 }
 
+DownloadableProductImages.sanitizedProductName = sanitizedProductName;
+DownloadableProductImages.sanitizeString = sanitizeString;
 module.exports = DownloadableProductImages

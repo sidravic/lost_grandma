@@ -8,7 +8,7 @@ const { DailyTriggerUploadToS3Queue, DailyTriggerUploadToS3QueueWorker } = requi
 UploadToS3Queue.process('upload_to_s3_queue', 1, UploadToS3QueueWorker)
 
 UploadToS3Queue.on('waiting', (jobId) => {
-    logger.debug({ src: 'workers/image_services/app.js', event: 'UploadToS3Queue.waiting', data: { jobId: jobId }})
+    logger.info({ src: 'workers/image_services/app.js', event: 'UploadToS3Queue.waiting', data: { jobId: jobId }})
 })
 
 UploadToS3Queue.on('stalled', (jobId) => {
@@ -16,7 +16,7 @@ UploadToS3Queue.on('stalled', (jobId) => {
 })
 
 UploadToS3Queue.on('progress', (job, progress) => {
-    logger.debug({ src: 'workers/image_services/app.js', event: 'UploadToS3Queue.progress', data: { job: job, progress: progress }})
+    logger.info({ src: 'workers/image_services/app.js', event: 'UploadToS3Queue.progress', data: { job: job, progress: progress }})
 })
 
 DailyTriggerUploadToS3Queue.on('waiting', (jobId) => {

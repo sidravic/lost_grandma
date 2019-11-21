@@ -95,9 +95,11 @@ class CoordinatorService extends BaseService {
 
     async batch() {
         await this.fetchProductsInBatches();
+        return true;
     }
 
     async fetchProductsInBatches() {
+
         const op = Sequelize.Op;
         const options = {
             includedModels: [
@@ -112,7 +114,8 @@ class CoordinatorService extends BaseService {
                 }
             ]
         }
-        findInBatches(Product, 1000, onEachBatch, options)
+        await findInBatches(Product, 1000, onEachBatch, options)
+        return;
     }
 
     async invoke(downloadableImagePayload) {
