@@ -38,12 +38,17 @@ const uploadImagesToS3AndPersist = async (downloadableImagePayload, service) => 
         let s3ObjectPath = `${bucketName}/${folderName}/${fileName}`
 
         try {
+            let status = {uploadStatus: null, persistStatus: null};
+
             let uploadStatus = await s3StoreObjectFromImageUrl(s3ObjectPath, imageUrl)
             logger.info({ event: 'downloadImages', src: 'Coordinator', data: { folderName: folderName, status: 'complete' } })
             const persistStatus = await persistS3Url(uploadStatus, imageUrl, imageUrlToId, service);
-            uploadStatus.persisStatus = persistStatus;
-            service.uploadStatus = uploadStatus;
-            return uploadStatus;
+
+            status.persistStatus = persistStatus;
+            status.uploadStatus = uploadStatus;
+            service.status.push(status);
+
+            return service.status;
         } catch (e) {
             service.addErrors([e.message])
             service.errorCode = 'error_uploading_images_to_s3';
@@ -76,7 +81,7 @@ const createMetadataFile = async (downloadableImagePayload, service) => {
         const metadataUploadStatus = await s3UploadFromInputStream(JSON.stringify(downloadableImagePayload), s3ObjectPath);
         logger.info({ src: 'Coordinator', event: 'createMetaDataFile', data: { status: 'success', path: s3ObjectPath } })
         service.metadataUploadStatus = metadataUploadStatus;
-        return metadataUploadStatus;
+        return service.metadataUploadStatus;
     } catch (e) {
         logger.info({ src: 'Coordinator', event: 'createMetaDataFile', data: { status: 'success', path: s3ObjectPath } })
         service.addErrors([e.message]);
@@ -88,7 +93,7 @@ class CoordinatorService extends BaseService {
     constructor() {
         super();
 
-        this.uploadStatus = null;
+        this.status = [];
         this.metadataUploadStatus = null;
         this.downloadableImagePayload = null;
     }
@@ -125,7 +130,7 @@ class CoordinatorService extends BaseService {
             await createMetadataFile(downloadableImagePayload, this);
 
             const coordinatorResponse = new CoordinatorServiceResponse(this.errors, this.errorCode,
-                this.downloadableImagePayload, this.uploadStatus, this.metadataUploadStatus)
+                this.downloadableImagePayload, this.status, this.metadataUploadStatus)
 
             return (new Promise((resolve, reject) => {
                 if (this.anyErrors()) {

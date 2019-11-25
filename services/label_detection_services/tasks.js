@@ -9,4 +9,4 @@ new Coordinator().batch().then((r) => {
     console.log(e.stack);
     console.log('Crapped out middway!');
     process.exit(1)
-});;
+});

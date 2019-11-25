@@ -1,6 +1,6 @@
 const axios =  require('axios');
 const Product = require('./../models/product');
-const { SocksAgent } = require('./proxy')
+const { SocksAgent, SocksHttpAgent } = require('./proxy')
 
 const getAxiosConfig = (productId, passKey) => {
     return {
@@ -17,7 +17,7 @@ const getAxiosConfig = (productId, passKey) => {
             'apiversion': '5.4',
             'Locale': 'en_US'
         },
-        httpAgent: SocksAgent,
+        httpAgent: SocksHttpAgent,
         httpsAgent: SocksAgent,
 
         validateStatus: (status) => { return status >= 200 && status < 300 },

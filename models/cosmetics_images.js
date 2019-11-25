@@ -11,6 +11,7 @@ class Image extends Sequelize.Model {
       cosmetics_brand_id: {type: Sequelize.UUID, allowNull: false},
       s3_image_url: {type: Sequelize.STRING, allowNull: true },
       azure_image_url: {type: Sequelize.STRING, allowNull: true},
+      source: {type: Sequelize.STRING, allowNull: false, defaultValue: 'sephora'},
       createdAt: Sequelize.DATE,
       updatedAt: Sequelize.DATE
     }, {

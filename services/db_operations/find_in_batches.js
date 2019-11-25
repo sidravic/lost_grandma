@@ -15,9 +15,16 @@ const findInBatches = async (modelName, batchSize, onBatch, options) => {
     let attributesClause = options.attributes || [];
 
     let offset = 0;
+    let maxCount = options.limit;
+    let totalCount = 0;
 
     try {
-        const totalCount = await modelName.count({ col: 'id' });
+        if (maxCount) {
+            totalCount = maxCount;
+        } else {
+            totalCount = await modelName.count({ col: 'id' });
+        }
+
         logger.debug(`number of records: ${totalCount}`);
 
         let findAllOptions = {
@@ -54,4 +61,3 @@ const findInBatches = async (modelName, batchSize, onBatch, options) => {
 
 const dbOps = { findInBatches }
 module.exports = dbOps;
-

@@ -12,17 +12,14 @@ config.update({
 
 const s3 = new aws.S3(config);
 
-const getBuckets = async () => {
-    try {
-        let buckets = await s3.listBuckets({}).promise()
-        logger.info({ event: 'S3 Bucket access working!' })
-        
-    } catch (e) {
-        logger.error({ event: 'S3 Bucket access failure!'})
-    }
-}
-
-getBuckets();
-
+// const getBuckets = async () => {
+//     try {
+//         let buckets = await s3.listBuckets({}).promise()
+//         logger.info({ event: 'S3 Bucket access working!' })
+//
+//     } catch (e) {
+//         logger.error({ event: 'S3 Bucket access failure!'})
+//     }
+// }
 
 module.exports = s3;

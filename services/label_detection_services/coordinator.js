@@ -64,7 +64,6 @@ const fetchLabels = async (service) => {
             data: {labels: labelsDetected, imageBlob: imageBlob}
         });
     } catch (e) {
-        debugger;
         logger.info({
             src: 'Coordinator',
             event: 'fetchLabels',

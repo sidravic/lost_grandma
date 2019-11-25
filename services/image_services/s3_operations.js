@@ -1,7 +1,7 @@
 const stream = require('stream')
 const logger = require('./../../config/logger');
 const s3 = require('./../../config/aws_s3_client');
-const { getDownloadReadStream } = require('./download_operations')
+const {getDownloadReadStream} = require('./download_operations')
 
 const s3StoreObjectFromImageUrl = async (s3ObjectPath, imageUrl) => {
 
@@ -20,14 +20,24 @@ const s3UploadFromInputStream = async (inputStream, s3ObjectPath) => {
     const uploadManager = s3.upload(uploadOptions)
     uploadManager.on('httpUploadProgress', (progress) => {
 
-        logger.info({ src: 's3_operations', event: 'uploadFromInputStream', data: { progress: progress } });
+        logger.info({src: 's3_operations', event: 'uploadFromInputStream', data: {progress: progress}});
     })
     return uploadManager.promise();
 }
 
+const getSignedGETUrlFromS3Url = async (s3Url, bucketName = process.env.S3_IMAGES_BUCKET_NAME, options = {}) => {
+    const key = s3Url.split('/').slice(3).join('/')
+    const url = await getSignedGETUrl(key, bucketName);
+    return url;
+}
 
+const getSignedGETUrl = async (key, bucketName = process.env.S3_IMAGES_BUCKET_NAME, options={}) => {
+    const expiryInSeconds = options.expiry || 86400;
+    const response = await s3.getSignedUrlPromise('getObject', {Bucket: bucketName, Key: key, Expires: expiryInSeconds})
+    return response;
+}
 
- let bucketName = process.env.S3_IMAGES_BUCKET_NAME
- 
 module.exports.s3StoreObjectFromImageUrl = s3StoreObjectFromImageUrl;
 module.exports.s3UploadFromInputStream = s3UploadFromInputStream;
+module.exports.getSignedGETUrl = getSignedGETUrl;
+module.exports.getSignedGETUrlFromS3Url =  getSignedGETUrlFromS3Url;
