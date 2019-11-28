@@ -3,6 +3,7 @@ const {BaseService, BaseServiceResponse} = require('./../base_service');
 const {createTag, batchUploadImages} = require('./azure_classifier_training');
 const getSignedGETUrlFromS3Url = require('./../image_services/s3_operations').getSignedGETUrlFromS3Url;
 const Constants = require('./../constants')
+const addUploadStatusesToRedis = require('./classified_products_for_project').addUploadStatusesToRedis;
 
 const filterImagesByLabels = async (service) => {
 
@@ -12,7 +13,7 @@ const filterImagesByLabels = async (service) => {
         const labelValues = image.ImageLabels.map((imageLabel) => {
             return imageLabel.label;
         })
-        const restrictedLabelValues = Constants.RestrictedLabels;
+        const restrictedLabelValues = [] //Constants.RestrictedLabels;
         let containsSomeRestrictedLabels = labelValues.some((labelValue) => {
             restrictedLabelValues.includes(labelValue)
         });
@@ -61,6 +62,7 @@ const uploadImageToClassifier = async (service) => {
     batch.tagIds.push(imageTagId);
 
     const uploadResponse = await batchUploadImages(service.classifierProject, batch);
+    await addUploadStatusesToRedis(service.classifierProject, service.product.id, uploadResponse);
     if (!uploadResponse.isBatchSuccessful) {
         const errors = uploadResponse.images.map((image) => {
             return image.status;

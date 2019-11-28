@@ -142,4 +142,3 @@ class CoordinatorResponse extends BaseServiceResponse{
 }
 
 module.exports = Coordinator;
-

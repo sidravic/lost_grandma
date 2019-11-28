@@ -5,7 +5,7 @@ const logger = require('../../config/logger');
 const redisUrl = process.env.REDIS_URL
 const SimilarImagesQueue = new Bull('similar_images_queue', redisUrl, {
     defaultJobOptions: {removeOnComplete: true},
-    limiter: {max: 6, duration: 1000},
+    limiter: {max: 1, duration: 5000},
 });
 
 // Avoid circular dependency loading problems
@@ -55,6 +55,8 @@ const SimilarImagesQueueWorker = async (job, done) => {
             error: {message: e.message, stack: e.stack}
         });
     }
+
+    // await ifCompleteTriggerNext(SimilarImagesQueue, LabelDetectionServiceTask);
     done();
 }
 

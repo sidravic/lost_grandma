@@ -25,11 +25,13 @@ const ClassificationQueueWorker = async (job, done) => {
         });
         done();
     } catch (e) {
+        const error = e.message || e.errors;
+        const stack = e.stack || e.errorCode;
         logger.error({
             src: 'workers/classification_services/classification_queue.js',
             event: 'processor',
             data: {success: false, productId: product.id, projectId: project.id},
-            error: { message: e.message, stack: e.stack}
+            error: { message: error, stack: stack}
         });
         done();
     }

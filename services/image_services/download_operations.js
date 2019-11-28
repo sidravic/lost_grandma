@@ -1,8 +1,5 @@
 const Axios = require('axios')
-const fs = require('fs')
-const logger = require('../../config/logger');
 const {SocksAgent, SocksHttpAgent, recreateCircuit} = require('../proxy')
-const {BaseService, BaseServiceResponse} = require('../base_service');
 const {generateRandomTill} = require('./../utils')
 
 const getUserAgentString = () => {
@@ -20,42 +17,43 @@ const getUserAgentString = () => {
 }
 
 
-
-const makeRequest = async (config) => {
-    try {
-        return (await Axios(config))
-    } catch (e) {
-        logger.error({
-            src: 'download_operations',
-            event: 'getDownloadreadStream',
-            data: {imageUrl: config.url },
-            error: {message: e.message, stack: e.stack}
-        });
-
-        return (new Promise((r, reject) => {
-            reject(e)
-        }));
-    }
-};
-
 const getDownloadReadStream = async (imageUrl) => {
 
     let response;
 
-    response = await makeRequest({
+    response = await Axios({
         method: 'GET',
         url: imageUrl,
         responseType: 'stream',
         httpAgent: SocksHttpAgent,
         httpsAgent: SocksAgent,
+        timeout: 15000,
         validateStatus: (status) => {
             return status >= 200 && status < 305
         },
-        maxRedirects: 2,
-        headers: {'User-Agent': getUserAgentString()}
+        maxRedirects: 2
+    })
+
+    return response.data;
+}
+
+const getDownloadReadStreamWithoutProxy = async (imageUrl) => {
+
+    let response;
+
+    response = await Axios({
+        method: 'GET',
+        url: imageUrl,
+        responseType: 'stream',
+        validateStatus: (status) => {
+            return status >= 200 && status < 305
+        },
+        maxRedirects: 5,
+        timeout: 15000
     })
 
     return response.data;
 }
 
 module.exports.getDownloadReadStream = getDownloadReadStream;
+module.exports.getDownloadReadStreamWithoutProxy = getDownloadReadStreamWithoutProxy;

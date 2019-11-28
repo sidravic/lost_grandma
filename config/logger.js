@@ -54,7 +54,7 @@ process.on('uncaughtException', (err) => {
     logger.error("-----------------------------------------------------------------------------")
     logger.error({event: 'uncaughtException', msg: err.message, stack: err.stack })
     logger.error("-----------------------------------------------------------------------------")
-    process.exit(1)
+    process.exit(1);
 })
 
 

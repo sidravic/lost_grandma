@@ -11,4 +11,5 @@ sephora-fetch-queue.*
 stack-development.env
 staging.env
 download_images
+/services/image_services/test_upload.js
 

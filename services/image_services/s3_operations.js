@@ -1,13 +1,12 @@
 const stream = require('stream')
 const logger = require('./../../config/logger');
 const s3 = require('./../../config/aws_s3_client');
-const {getDownloadReadStream} = require('./download_operations')
+const {getDownloadReadStream, getDownloadReadStreamWithoutProxy} = require('./download_operations')
 
 const s3StoreObjectFromImageUrl = async (s3ObjectPath, imageUrl) => {
 
     let imageReadStream = await getDownloadReadStream(imageUrl);
-    let promise = s3UploadFromInputStream(imageReadStream, s3ObjectPath);
-    return promise;
+    return (await s3UploadFromInputStream(imageReadStream, s3ObjectPath));
 }
 
 const s3UploadFromInputStream = async (inputStream, s3ObjectPath) => {
@@ -17,12 +16,8 @@ const s3UploadFromInputStream = async (inputStream, s3ObjectPath) => {
         Key: s3ObjectPath,
         Body: inputStream
     }
-    const uploadManager = s3.upload(uploadOptions)
-    uploadManager.on('httpUploadProgress', (progress) => {
 
-        logger.info({src: 's3_operations', event: 'uploadFromInputStream', data: {progress: progress}});
-    })
-    return uploadManager.promise();
+    return (await s3.upload(uploadOptions).promise())
 }
 
 const getSignedGETUrlFromS3Url = async (s3Url, bucketName = process.env.S3_IMAGES_BUCKET_NAME, options = {}) => {

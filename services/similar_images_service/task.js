@@ -1,5 +1,5 @@
 const logger = require('./../../config/logger');
-const { findInBatches } = require('./../db_operations/find_in_batches');
+const {findInBatches} = require('./../db_operations/find_in_batches');
 const Sequelize = require('sequelize');
 const {Brand, Product, Source, Image, ImageLabel, Review, ReviewComment, dbConn} = require('./../../models')
 
@@ -11,7 +11,7 @@ const onBatch = (batchId) => {
     return (async (products) => {
         await Promise.all(products.map(async (product) => {
             const jobPayload = {productId: product.id, batchId: batchId};
-            const retryOptions = {removeOnComplete: true, removeOnFail:  true, attempts: 0};
+            const retryOptions = {removeOnComplete: true, removeOnFail: true, attempts: 0};
             const job = await SimilarImagesQueue.add('similar_images_queue', JSON.stringify(jobPayload), retryOptions);
             logger.info({src: 'task', event: 'SimilarImagesQueueJobAdded', data: {similarImagesBlob: jobPayload}});
         }))
@@ -33,17 +33,23 @@ const findProductsWithLessThan5ImagesAndNonRestrictedLabels = async (batchId) =>
                 model: Image,
                 required: true,
                 attributes: ['id', 'image_url', 's3_image_url'],
-                include: [{
-                    model: ImageLabel,
-                    required: true,
-                    attributes: ['id', 'label'],
-                    where: {
-                        label: {[op.notIn]: Constants.RestrictedLabels}
-                    }
-                }]
+                where: {
+                    [op.and]: [
+                        { s3_image_url: {[op.not]: null}},
+                        { source: 'sephora'}
+                    ]
+                }
+                // include: [{
+                //     model: ImageLabel,
+                //     required: true,
+                //     attributes: ['id', 'label'],
+                //     where: {
+                //         label: {[op.notIn]: Constants.RestrictedLabels}
+                //     }
+                // }]
             }
         ],
-        limit: 200
+        limit: 100
 
     }
 
@@ -52,21 +58,10 @@ const findProductsWithLessThan5ImagesAndNonRestrictedLabels = async (batchId) =>
 }
 
 
+const main = async () => {
+    const uuid = require('uuid')
+    await findProductsWithLessThan5ImagesAndNonRestrictedLabels(uuid.v4())
+    return
+}
 
-const uuid = require('uuid')
-findProductsWithLessThan5ImagesAndNonRestrictedLabels(uuid.v4()).then((r) => {
-    logger.info({
-        src: 'task',
-        event: 'findProductsWithLessThan5ImagesAndNonRestrictedLabels',
-        data: {timestamp: new Date(), status: 'completed'}
-    });
-
-    process.exit(0);
-}).catch((e) => {
-    logger.error({
-        src: 'task',
-        event: 'findProductsWithLessThan5ImagesAndNonRestrictedLabels',
-        data: {timestamp: new Date(), status: 'completed'}
-    });
-    process.exit(1);
-})
+module.exports = main;

@@ -50,6 +50,10 @@ const findInBatches = async (modelName, batchSize, onBatch, options) => {
             if (products.length == 0) {
                 return (new Promise((resolve, reject) => { resolve() }))        
             };
+
+            if (products.length < batchSize){
+                return (new Promise((resolve, reject) => { resolve()}))
+            }
         }
         return (new Promise((resolve, reject) => { resolve() }))
     } catch (e) {

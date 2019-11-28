@@ -46,7 +46,6 @@ const LabelDetectionQueueWorker = async (job, done) => {
             src: 'LabelDetectionQueueWorker', event: 'completed',
             data: {job: job.id, status: response}
         })
-
         done();
     } catch (e) {
 
@@ -55,6 +54,7 @@ const LabelDetectionQueueWorker = async (job, done) => {
             data: {job: job.id, status: 'error'},
             error: {message: e.message, stack: e.stack}
         })
+
         done();
     }
 }

@@ -32,11 +32,11 @@ const createTrainingProject = async () => {
 
 const batchUploadImages = async (project, batch) => {
     const onUploadProgress = (event) => {
-        logger.info({src: 'azure_classifier_training', event: 'onUploadProgress', data: { progress: event }});
+        logger.debug({src: 'azure_classifier_training', event: 'onUploadProgress', data: { progress: event }});
     }
 
     const onDownloadProgress = (event) => {
-        logger.info({src: 'azure_classifier_training', event: 'onDownloadProgress', data: { progress: event }});
+        logger.debug({src: 'azure_classifier_training', event: 'onDownloadProgress', data: { progress: event }});
     }
 
     const options = {
