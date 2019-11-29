@@ -5,6 +5,7 @@ new_file.json
 sephora-fetch-queue
 quick_queries
 local_development.env
+development.env
 .vscode
 .history
 sephora-fetch-queue.*

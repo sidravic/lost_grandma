@@ -105,6 +105,7 @@ class Coordinator extends BaseService {
 
 
 let c = new Coordinator()
+
 c.invoke().then((r) => {
     console.log(r);
 }).catch((e) => {
