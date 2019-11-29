@@ -73,7 +73,7 @@ services:
     build: .
     image: ${LOST_GRANDMA_IMAGE_ID}
     env_file:
-      - stack-development.env
+      - staging.env
     networks:
       - core-infra
     command: ["./services/batch_coordinator/launch.sh"]
