@@ -14,7 +14,7 @@ const getTransports = () => {
             host: process.env.LOGSTASH_HOST,
             port: process.env.LOGSTASH_UDP_PORT
         })
-        transports.push(logstashTransport);
+        //transports.push(logstashTransport);
     }
 
     return transports
@@ -49,11 +49,14 @@ const logger = winston.createLogger({
     transports: getTransports()
 });
 
-if (process.env.NODE_ENV != 'development'){
-    process.on('uncaughtException', (err) => {
-        logger.error({event: 'uncaughtException', msg: err.message, stack: err.stack }) 
-    })   
-}
+
+process.on('uncaughtException', (err) => {
+    logger.error("-----------------------------------------------------------------------------")
+    logger.error({event: 'uncaughtException', msg: err.message, stack: err.stack })
+    logger.error("-----------------------------------------------------------------------------")
+    process.exit(1);
+})
+
 
 logger.info({status: 'Logger started111.'});
 module.exports = logger;

@@ -11,6 +11,8 @@ services:
       - core-infra
     command: ['./launch.sh']
     deploy:
+      mode:
+        replicated: 2
       restart_policy:
         condition: on-failure
         delay: 5s
@@ -19,6 +21,7 @@ services:
       placement:
         constraints:
           - node.labels.stateless == true
+
   worker:
     depends_on:
       - tor
@@ -38,9 +41,11 @@ services:
       placement:
         constraints:
           - node.labels.stateless == true
-  image_uploader:
+
+  image_service:
     depends_on:
       - tor
+      - lost_grandma
     build: .
     image: ${LOST_GRANDMA_IMAGE_ID}
     env_file:
@@ -75,7 +80,128 @@ services:
                 window: 180s      
               placement:
                 constraints:
-                  - node.labels.stateless == true          
+                  - node.labels.stateless == true
+
+  label_detection_service:
+    depends_on:
+      - tor
+      - lost_grandma
+    build: .
+    image: ${LOST_GRANDMA_IMAGE_ID}
+    env_file:
+      - staging.env
+    networks:
+      - core-infra
+    command: ["./launch_workers.sh"]
+    deploy:
+      restart_policy:
+        condition: on-failure
+        delay: 5s
+        max_attempts: 100
+        window: 180s
+      placement:
+        constraints:
+          - node.labels.stateless == true
+          worker:
+            depends_on:
+              - tor
+            build: .
+            image: ${LOST_GRANDMA_IMAGE_ID}
+            env_file:
+              - staging.env
+            networks:
+              - core-infra
+            command: ["./launch_workers.sh"]
+            deploy:
+              restart_policy:
+                condition: on-failure
+                delay: 5s
+                max_attempts: 100
+                window: 180s
+              placement:
+                constraints:
+                  - node.labels.stateless == true
+
+  similar_images_service:
+    depends_on:
+      - tor
+      - lost_grandma
+    build: .
+    image: ${LOST_GRANDMA_IMAGE_ID}
+    env_file:
+      - staging.env
+    networks:
+      - core-infra
+    command: ["./launch_workers.sh"]
+    deploy:
+      restart_policy:
+        condition: on-failure
+        delay: 5s
+        max_attempts: 100
+        window: 180s
+      placement:
+        constraints:
+          - node.labels.stateless == true
+          worker:
+            depends_on:
+              - tor
+            build: .
+            image: ${LOST_GRANDMA_IMAGE_ID}
+            env_file:
+              - staging.env
+            networks:
+              - core-infra
+            command: ["./launch_workers.sh"]
+            deploy:
+              restart_policy:
+                condition: on-failure
+                delay: 5s
+                max_attempts: 100
+                window: 180s
+              placement:
+                constraints:
+                  - node.labels.stateless == true
+
+  classification_service:
+    depends_on:
+      - tor
+      - lost_grandma
+    build: .
+    image: ${LOST_GRANDMA_IMAGE_ID}
+    env_file:
+      - staging.env
+    networks:
+      - core-infra
+    command: ["./launch_workers.sh"]
+    deploy:
+      restart_policy:
+        condition: on-failure
+        delay: 5s
+        max_attempts: 100
+        window: 180s
+      placement:
+        constraints:
+          - node.labels.stateless == true
+          worker:
+            depends_on:
+              - tor
+            build: .
+            image: ${LOST_GRANDMA_IMAGE_ID}
+            env_file:
+              - staging.env
+            networks:
+              - core-infra
+            command: ["./launch_workers.sh"]
+            deploy:
+              restart_policy:
+                condition: on-failure
+                delay: 5s
+                max_attempts: 100
+                window: 180s
+              placement:
+                constraints:
+                  - node.labels.stateless == true
+
   tor:
     networks:
       - core-infra

@@ -7,7 +7,6 @@ const UploadToS3Queue = new Bull('upload_to_s3_queue', redisUrl, {
     limiter: { max: 1, duration: 10000 },
     defaultJobOptions: { removeOnComplete: true }
 });
-
 // Avoid circular dependency loading problems
 const CoordinatorService = require('../../services/image_services/coordinator');
 
@@ -23,12 +22,13 @@ const UploadToS3QueueWorker = async (job, done) => {
 
     const downloadableImagePayload = JSON.parse(data);
     const service = new CoordinatorService();
+
     try {
-        const uploadStatus = await service.saveToS3(downloadableImagePayload)
+        const coordinatorResponse = await service.invoke(downloadableImagePayload)
 
         logger.info({
             src: 'UploadToS3QueueWorker', event: 'completed',
-            data: { job: job.id, status: uploadStatus }
+            data: { job: job.id, status: coordinatorResponse }
         })
         done();
     } catch (e){
@@ -38,7 +38,9 @@ const UploadToS3QueueWorker = async (job, done) => {
             error: { message: e.message, stack: e.stack}
         })
         done();
-    }
+    };
+    return;
+
 }
 
 module.exports.UploadToS3Queue = UploadToS3Queue;

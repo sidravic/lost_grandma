@@ -4,14 +4,14 @@ module.exports = {
   up: async (queryInterface, Sequelize) => {
     const addS3ImageUrl = async () => {
       return queryInterface.addColumn('cosmetics_images', 's3_image_url', {
-        type: Sequelize.STRING,
+        type: Sequelize.STRING(510),
         allowNull: true        
       })
     }
 
     const addAzureBlobStoreUrl = async() => {
       return queryInterface.addColumn('cosmetics_images', 'azure_image_url', {
-        type: Sequelize.STRING,
+        type: Sequelize.STRING(510),
         allowNull: true        
       })
     }

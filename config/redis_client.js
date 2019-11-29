@@ -5,6 +5,7 @@ const redisClient = redis.createClient({url: process.env.REDIS_URL})
 const asyncPing = util.promisify(redisClient.ping).bind(redisClient);
 const asyncSet = util.promisify(redisClient.set).bind(redisClient);
 const asyncDel = util.promisify(redisClient.del).bind(redisClient);
+const asyncSAdd = util.promisify(redisClient.sadd).bind(redisClient)
 
 const checkConnection = async () => {
     let pong = await asyncPing();
@@ -35,8 +36,9 @@ const Lock = {
     releaseLock: releaseLock
 }
 
-module.exports = redisClient;
+module.exports.redisClient = redisClient;
 module.exports.Lock = Lock;
+module.exports.asyncSAdd = asyncSAdd;
 
 
 

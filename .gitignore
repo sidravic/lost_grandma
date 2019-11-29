@@ -5,10 +5,12 @@ new_file.json
 sephora-fetch-queue
 quick_queries
 local_development.env
+development.env
 .vscode
 .history
 sephora-fetch-queue.*
 stack-development.env
 staging.env
 download_images
+/services/image_services/test_upload.js
 
