@@ -156,10 +156,9 @@ class CoordinatorService extends BaseService {
                     model: Brand,
                     required: true
                 }
-            ],
-            limit: 100
+            ]
         }
-        await findInBatches(Product, 100, onEachBatch, options)
+        await findInBatches(Product, 1000, onEachBatch, options)
         return;
     }
 

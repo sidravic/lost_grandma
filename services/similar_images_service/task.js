@@ -40,13 +40,11 @@ const findProductsWithLessThan5ImagesAndNonRestrictedLabels = async (batchId) =>
                     ]
                 }
             }
-        ],
-        limit: 100
-
+        ]
     }
 
     const onEachBatch = onBatch(batchId);
-    await findInBatches(Product, 100, onEachBatch, batchOptions);
+    await findInBatches(Product, 1000, onEachBatch, batchOptions);
 }
 
 

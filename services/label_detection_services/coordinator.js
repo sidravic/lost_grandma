@@ -40,10 +40,10 @@ const fetchImagesWithoutLabels = async () => {
                 s3_image_url: {[op.not]: null},
             },
         },
-        attributes: ['id', 's3_image_url', 'azure_image_url', 'image_url'],
-        limit: 100
+        attributes: ['id', 's3_image_url', 'azure_image_url', 'image_url']
+
     }
-    await findInBatches(Image, 100, onEachBatch, options)
+    await findInBatches(Image, 1000, onEachBatch, options)
     return;
 }
 
