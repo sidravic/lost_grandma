@@ -142,7 +142,7 @@ services:
       - stack-development.env
     networks:
       - core-infra
-    command: ["./workers/similar_images_services/launch.sh"]
+    command: ["./workers/similar_image_services/launch.sh"]
     deploy:
       restart_policy:
         condition: on-failure
