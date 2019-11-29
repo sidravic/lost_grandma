@@ -63,6 +63,7 @@ services:
       placement:
         constraints:
           - node.labels.stateless == true
+
   batch_coordinator_service:
     depends_on:
       - tor
@@ -83,24 +84,7 @@ services:
       placement:
         constraints:
           - node.labels.stateless == true
-          worker:
-            depends_on:
-              - tor
-            build: .
-            image: ${LOST_GRANDMA_IMAGE_ID}
-            env_file:
-              - staging.env
-            networks:
-              - core-infra
-            deploy:
-              restart_policy:
-                condition: on-failure
-                delay: 5s
-                max_attempts: 100
-                window: 180s
-              placement:
-                constraints:
-                  - node.labels.stateless == true
+
   image_service:
     depends_on:
       - tor
@@ -122,24 +106,7 @@ services:
       placement:
         constraints:
           - node.labels.stateless == true
-          worker:
-            depends_on:
-              - tor
-            build: .
-            image: ${LOST_GRANDMA_IMAGE_ID}
-            env_file:
-              - staging.env
-            networks:
-              - core-infra
-            deploy:
-              restart_policy:
-                condition: on-failure
-                delay: 5s
-                max_attempts: 100
-                window: 180s
-              placement:
-                constraints:
-                  - node.labels.stateless == true
+
   label_detection_service:
     depends_on:
       - tor
@@ -161,25 +128,7 @@ services:
       placement:
         constraints:
           - node.labels.stateless == true
-          worker:
-            depends_on:
-              - tor
-            build: .
-            image: ${LOST_GRANDMA_IMAGE_ID}
-            env_file:
-              - staging.env
-            networks:
-              - core-infra
 
-            deploy:
-              restart_policy:
-                condition: on-failure
-                delay: 5s
-                max_attempts: 100
-                window: 180s
-              placement:
-                constraints:
-                  - node.labels.stateless == true
   similar_images_service:
     depends_on:
       - tor
@@ -201,24 +150,7 @@ services:
       placement:
         constraints:
           - node.labels.stateless == true
-          worker:
-            depends_on:
-              - tor
-            build: .
-            image: ${LOST_GRANDMA_IMAGE_ID}
-            env_file:
-              - staging.env
-            networks:
-              - core-infra
-            deploy:
-              restart_policy:
-                condition: on-failure
-                delay: 5s
-                max_attempts: 100
-                window: 180s
-              placement:
-                constraints:
-                  - node.labels.stateless == true
+
   classification_service:
     depends_on:
       - tor
@@ -240,24 +172,6 @@ services:
       placement:
         constraints:
           - node.labels.stateless == true
-          worker:
-            depends_on:
-              - tor
-            build: .
-            image: ${LOST_GRANDMA_IMAGE_ID}
-            env_file:
-              - staging.env
-            networks:
-              - core-infra
-            deploy:
-              restart_policy:
-                condition: on-failure
-                delay: 5s
-                max_attempts: 100
-                window: 180s
-              placement:
-                constraints:
-                  - node.labels.stateless == true
 
 networks:  
   core-infra:
