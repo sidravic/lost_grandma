@@ -11,8 +11,6 @@ services:
       - core-infra
     command: ['./launch.sh']
     deploy:
-      mode:
-        replicated: 2
       restart_policy:
         condition: on-failure
         delay: 5s
@@ -21,7 +19,6 @@ services:
       placement:
         constraints:
           - node.labels.stateless == true
-
   worker:
     depends_on:
       - tor
@@ -41,6 +38,73 @@ services:
       placement:
         constraints:
           - node.labels.stateless == true
+  tor:
+    networks:
+      - core-infra
+    build:
+      context: ./scripts/tor
+      dockerfile: Dockerfile
+    image: ${TOR_IMAGE_ID}
+    expose:
+      - 9050
+      - 9080
+      - 9051
+    ports:
+      - "9050:9050"
+      - "9051:9051"
+      - "9080:9080"
+    command: ["./launch_tor.sh"]
+    deploy:
+      mode:
+        replicated: 2
+      restart_policy:
+        condition: on-failure
+        delay: 5s
+        max_attempts: 10
+        window: 180s
+      placement:
+        constraints:
+          - node.labels.stateless == true
+
+  batch_coordinator_service:
+    depends_on:
+      - tor
+      - lost_grandma
+    build: .
+    image: ${LOST_GRANDMA_IMAGE_ID}
+    env_file:
+      - stack-development.env
+    networks:
+      - core-infra
+    command: ["./services/batch_coordinator/launch.sh"]
+    deploy:
+      restart_policy:
+        condition: on-failure
+        delay: 5s
+        max_attempts: 100
+        window: 180s
+      placement:
+        constraints:
+          - node.labels.stateless == true
+          worker:
+            depends_on:
+              - tor
+            build: .
+            image: ${LOST_GRANDMA_IMAGE_ID}
+            env_file:
+              - staging.env
+            networks:
+              - core-infra
+            deploy:
+              restart_policy:
+                condition: on-failure
+                delay: 5s
+                max_attempts: 100
+                window: 180s
+              placement:
+                constraints:
+                  - node.labels.stateless == true
+
 
   image_service:
     depends_on:
@@ -52,7 +116,7 @@ services:
       - staging.env
     networks:
       - core-infra
-    command: ["./launch_workers.sh"]
+    command: ["./workers/image_services/launch.sh"]
     deploy:
       restart_policy:
         condition: on-failure
@@ -71,7 +135,6 @@ services:
               - staging.env
             networks:
               - core-infra
-            command: ["./launch_workers.sh"]
             deploy:
               restart_policy:
                 condition: on-failure
@@ -92,7 +155,7 @@ services:
       - staging.env
     networks:
       - core-infra
-    command: ["./launch_workers.sh"]
+    command: ["./workers/label_detection_services/launch.sh"]
     deploy:
       restart_policy:
         condition: on-failure
@@ -111,7 +174,6 @@ services:
               - staging.env
             networks:
               - core-infra
-            command: ["./launch_workers.sh"]
             deploy:
               restart_policy:
                 condition: on-failure
@@ -132,7 +194,7 @@ services:
       - staging.env
     networks:
       - core-infra
-    command: ["./launch_workers.sh"]
+    command: ["./workers/similar_images_services/launch.sh"]
     deploy:
       restart_policy:
         condition: on-failure
@@ -151,7 +213,6 @@ services:
               - staging.env
             networks:
               - core-infra
-            command: ["./launch_workers.sh"]
             deploy:
               restart_policy:
                 condition: on-failure
@@ -172,7 +233,7 @@ services:
       - staging.env
     networks:
       - core-infra
-    command: ["./launch_workers.sh"]
+    command: ["./workers/classification_services/launch.sh"]
     deploy:
       restart_policy:
         condition: on-failure
@@ -191,7 +252,6 @@ services:
               - staging.env
             networks:
               - core-infra
-            command: ["./launch_workers.sh"]
             deploy:
               restart_policy:
                 condition: on-failure
@@ -202,32 +262,6 @@ services:
                 constraints:
                   - node.labels.stateless == true
 
-  tor:
-    networks:
-      - core-infra
-    build:
-      context: ./scripts/tor
-      dockerfile: Dockerfile
-    image: ${TOR_IMAGE_ID}
-    expose:
-      - 9050
-      - 9080
-      - 9051
-    ports:
-      - "9050:9050"
-      - "9051:9051"
-      - "9080:9080"
-    command: ["./launch_tor.sh"]
-    deploy:
-      restart_policy:
-        condition: on-failure
-        delay: 5s
-        max_attempts: 10
-        window: 180s
-      placement:
-        constraints:
-          - node.labels.stateless == true
-  
 networks:  
   core-infra:
     external: true

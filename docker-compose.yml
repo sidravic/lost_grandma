@@ -63,7 +63,202 @@ services:
       placement:
         constraints:
           - node.labels.stateless == true
-  
+  batch_coordinator_service:
+    depends_on:
+      - tor
+      - lost_grandma
+    build: .
+    image: ${LOST_GRANDMA_IMAGE_ID}
+    env_file:
+      - stack-development.env
+    networks:
+      - core-infra
+    command: ["./services/batch_coordinator/launch.sh"]
+    deploy:
+      restart_policy:
+        condition: on-failure
+        delay: 5s
+        max_attempts: 100
+        window: 180s
+      placement:
+        constraints:
+          - node.labels.stateless == true
+          worker:
+            depends_on:
+              - tor
+            build: .
+            image: ${LOST_GRANDMA_IMAGE_ID}
+            env_file:
+              - staging.env
+            networks:
+              - core-infra
+            deploy:
+              restart_policy:
+                condition: on-failure
+                delay: 5s
+                max_attempts: 100
+                window: 180s
+              placement:
+                constraints:
+                  - node.labels.stateless == true
+  image_service:
+    depends_on:
+      - tor
+      - lost_grandma
+      - batch_coordinator_service
+    build: .
+    image: ${LOST_GRANDMA_IMAGE_ID}
+    env_file:
+      - stack-development.env
+    networks:
+      - core-infra
+    command: ["./workers/image_services/launch.sh"]
+    deploy:
+      restart_policy:
+        condition: on-failure
+        delay: 5s
+        max_attempts: 100
+        window: 180s
+      placement:
+        constraints:
+          - node.labels.stateless == true
+          worker:
+            depends_on:
+              - tor
+            build: .
+            image: ${LOST_GRANDMA_IMAGE_ID}
+            env_file:
+              - staging.env
+            networks:
+              - core-infra
+            deploy:
+              restart_policy:
+                condition: on-failure
+                delay: 5s
+                max_attempts: 100
+                window: 180s
+              placement:
+                constraints:
+                  - node.labels.stateless == true
+  label_detection_service:
+    depends_on:
+      - tor
+      - lost_grandma
+      - batch_coordinator_service
+    build: .
+    image: ${LOST_GRANDMA_IMAGE_ID}
+    env_file:
+      - stack-development.env
+    networks:
+      - core-infra
+    command: ["./workers/label_detection_services/launch.sh"]
+    deploy:
+      restart_policy:
+        condition: on-failure
+        delay: 5s
+        max_attempts: 100
+        window: 180s
+      placement:
+        constraints:
+          - node.labels.stateless == true
+          worker:
+            depends_on:
+              - tor
+            build: .
+            image: ${LOST_GRANDMA_IMAGE_ID}
+            env_file:
+              - staging.env
+            networks:
+              - core-infra
+
+            deploy:
+              restart_policy:
+                condition: on-failure
+                delay: 5s
+                max_attempts: 100
+                window: 180s
+              placement:
+                constraints:
+                  - node.labels.stateless == true
+  similar_images_service:
+    depends_on:
+      - tor
+      - lost_grandma
+      - batch_coordinator_service
+    build: .
+    image: ${LOST_GRANDMA_IMAGE_ID}
+    env_file:
+      - stack-development.env
+    networks:
+      - core-infra
+    command: ["./workers/similar_images_services/launch.sh"]
+    deploy:
+      restart_policy:
+        condition: on-failure
+        delay: 5s
+        max_attempts: 100
+        window: 180s
+      placement:
+        constraints:
+          - node.labels.stateless == true
+          worker:
+            depends_on:
+              - tor
+            build: .
+            image: ${LOST_GRANDMA_IMAGE_ID}
+            env_file:
+              - staging.env
+            networks:
+              - core-infra
+            deploy:
+              restart_policy:
+                condition: on-failure
+                delay: 5s
+                max_attempts: 100
+                window: 180s
+              placement:
+                constraints:
+                  - node.labels.stateless == true
+  classification_service:
+    depends_on:
+      - tor
+      - lost_grandma
+      - batch_coordinator_service
+    build: .
+    image: ${LOST_GRANDMA_IMAGE_ID}
+    env_file:
+      - stack-development.env
+    networks:
+      - core-infra
+    command: ["./workers/classification_services/launch.sh"]
+    deploy:
+      restart_policy:
+        condition: on-failure
+        delay: 5s
+        max_attempts: 100
+        window: 180s
+      placement:
+        constraints:
+          - node.labels.stateless == true
+          worker:
+            depends_on:
+              - tor
+            build: .
+            image: ${LOST_GRANDMA_IMAGE_ID}
+            env_file:
+              - staging.env
+            networks:
+              - core-infra
+            deploy:
+              restart_policy:
+                condition: on-failure
+                delay: 5s
+                max_attempts: 100
+                window: 180s
+              placement:
+                constraints:
+                  - node.labels.stateless == true
+
 networks:  
   core-infra:
     external: true
