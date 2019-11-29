@@ -39,14 +39,6 @@ const findProductsWithLessThan5ImagesAndNonRestrictedLabels = async (batchId) =>
                         { source: 'sephora'}
                     ]
                 }
-                // include: [{
-                //     model: ImageLabel,
-                //     required: true,
-                //     attributes: ['id', 'label'],
-                //     where: {
-                //         label: {[op.notIn]: Constants.RestrictedLabels}
-                //     }
-                // }]
             }
         ],
         limit: 100

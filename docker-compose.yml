@@ -55,6 +55,8 @@ services:
       - "9080:9080"
     command: ["./launch_tor.sh"]
     deploy:
+      mode:
+        replicated: 2
       restart_policy:
         condition: on-failure
         delay: 5s

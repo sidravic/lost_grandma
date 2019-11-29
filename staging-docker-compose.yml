@@ -91,6 +91,7 @@ services:
     depends_on:
       - tor
       - lost_grandma
+      - batch_coordinator_service
     build: .
     image: ${LOST_GRANDMA_IMAGE_ID}
     env_file:
@@ -112,6 +113,7 @@ services:
     depends_on:
       - tor
       - lost_grandma
+      - batch_coordinator_service
     build: .
     image: ${LOST_GRANDMA_IMAGE_ID}
     env_file:
@@ -133,6 +135,7 @@ services:
     depends_on:
       - tor
       - lost_grandma
+      - batch_coordinator_service
     build: .
     image: ${LOST_GRANDMA_IMAGE_ID}
     env_file:
@@ -154,6 +157,7 @@ services:
     depends_on:
       - tor
       - lost_grandma
+      - batch_coordinator_service
     build: .
     image: ${LOST_GRANDMA_IMAGE_ID}
     env_file:
