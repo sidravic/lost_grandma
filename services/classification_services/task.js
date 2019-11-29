@@ -93,12 +93,4 @@ const getApplicableIds = async() => {
 
 module.exports = main;
 
-main().then((r) => {
-    console.log(r)
-}).catch((e) => {
-    console.log(e)
-    process.exit(1);
-})
-
-
 
