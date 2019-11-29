@@ -14,7 +14,7 @@ const getTransports = () => {
             host: process.env.LOGSTASH_HOST,
             port: process.env.LOGSTASH_UDP_PORT
         })
-        //transports.push(logstashTransport);
+        transports.push(logstashTransport);
     }
 
     return transports
