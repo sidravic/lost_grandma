@@ -83,10 +83,8 @@ const getApplicableIds = async() => {
         "                             ) more_than_5_images)";
 
 
-    debugger;
     const [productIdsArray, result] = await dbConn.query(validProductIdsQuery)
     const productIds = productIdsArray.map((productIds) => { return productIds.id })
-    debugger;
     return productIds;
 }
 

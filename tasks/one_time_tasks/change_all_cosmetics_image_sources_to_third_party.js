@@ -10,6 +10,6 @@ Image.update({source: 'other'},
             }
         }
     }).then((r) => {
-        debugger;
+        
     console.log(r);
 })

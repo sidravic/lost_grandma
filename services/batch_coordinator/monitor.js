@@ -35,7 +35,7 @@ const completeBatch = async (service) => {
 }
 
 const invokeAndMarkComplete = async(invoker, service, serviceName) => {
-    debugger;
+
     if (isToBeInvoked(service, serviceName)) {
         await invoker();
         await markCompleted(service, serviceName);
