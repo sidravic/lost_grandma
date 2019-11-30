@@ -54,7 +54,7 @@ const monitor = async (service, serviceName, invoker, queue) => {
         logger.info({
             src: 'batch_coordinator',
             event: 'monitoring',
-            data: {queue: currentQueue.name, completed: batchCompleted, pendingCount: pendingCount}
+            data: {queue: currentQueue.name.toString(), completed: batchCompleted.toString(), pendingCount: pendingCount.toString()}
         })
 
         await sleep(5000);
@@ -68,7 +68,7 @@ const monitor = async (service, serviceName, invoker, queue) => {
     logger.info({
         src: 'batch_coordinator',
         event: 'monitoring',
-        data: {queue: currentQueue.name, completed: batchCompleted}
+        data: {queue: currentQueue.name.toString(), completed: batchCompleted.toString()};
     })
 
     return;
