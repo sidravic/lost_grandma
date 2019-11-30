@@ -68,7 +68,7 @@ const monitor = async (service, serviceName, invoker, queue) => {
     logger.info({
         src: 'batch_coordinator',
         event: 'monitoring',
-        data: {queue: currentQueue.name.toString(), completed: batchCompleted.toString()};
+        data: {queue: currentQueue.name.toString(), completed: batchCompleted.toString() }
     })
 
     return;
