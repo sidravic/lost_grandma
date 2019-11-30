@@ -18,7 +18,7 @@ const CoordinatorService = require('../../services/image_services/coordinator');
  */
 const UploadToS3QueueWorker = async (job, done) => {
     const data = job.data;
-    logger.info({ src: 'UploadToS3QueueWorker', data: job.id, status: 'started' });
+    logger.info({ src: 'UploadToS3QueueWorker', data: {jobId: job.id, status: 'started' }});
 
     const downloadableImagePayload = JSON.parse(data);
     const service = new CoordinatorService();

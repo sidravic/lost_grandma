@@ -35,7 +35,7 @@ LabelDetectionQueue.on('progress', (job, progress) => {
  */
 const LabelDetectionQueueWorker = async (job, done) => {
     const data = job.data;
-    logger.info({src: 'LabelDetectionQueueWorker', data: job.id, status: 'started'});
+    logger.info({src: 'LabelDetectionQueueWorker', data: {jobId: job.id, status: 'started'}});
 
     const imageBlob = JSON.parse(data);
     const service = new CoordinatorService();

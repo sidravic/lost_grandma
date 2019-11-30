@@ -11,10 +11,13 @@ const recreateCircuits = async () => {
     const command = '(echo authenticate \'""\'; echo signal newnym; echo quit) | nc localhost 9051'
     const {stdout, stderr} = await asyncExec(newCommand)
     logger.info({
+        src: 'tor_change_circuit',
         event: 'recreateCircuits',
-        command: '(echo authenticate \'""\'; echo signal newnym; echo quit) | nc localhost 9051',
-        stderr: stderr,
-        stdout: stdout
+        data: {
+            command: '(echo authenticate \'""\'; echo signal newnym; echo quit) | nc localhost 9051',
+            stderr: stderr,
+            stdout: stdout
+        }
     })
 }
 
@@ -22,7 +25,7 @@ const checkNewCircuitIp = async () => {
     const command = 'curl --socks5 127.0.0.1:9050 http://checkip.amazonaws.com/'
     const {stdout, stderr} = await asyncExec(command);
     const newIp = stdout.trim();
-    logger.info({event: 'checkNewCircuitIp', newIP: newIp, stderr: stderr})
+    logger.info({event: 'checkNewCircuitIp', data: {newIP: newIp, stderr: stderr}, src: 'tor_change_circuits'})
     return;
 }
 

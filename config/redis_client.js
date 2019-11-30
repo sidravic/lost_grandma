@@ -9,8 +9,8 @@ const asyncSAdd = util.promisify(redisClient.sadd).bind(redisClient)
 
 const checkConnection = async () => {
     let pong = await asyncPing();
-    logger.info(`ping: ${pong}`);
-    logger.info(`redis connection established on ${redisClient.address}`);
+    logger.info({data: {message: `ping: ${pong}`}});
+    logger.info({data: {message: `redis connection established on ${redisClient.address}`}});
 }
 
 checkConnection();
@@ -19,13 +19,13 @@ const buildKey = (key) => {
     return `lock:${key}`;
 }
 
-const acquireLock = async(key) => {
+const acquireLock = async (key) => {
     const lockKey = buildKey(key)
-    const lockStatus =  await asyncSet(lockKey, 1, 'NX');
+    const lockStatus = await asyncSet(lockKey, 1, 'NX');
     return lockStatus;
 }
 
-const releaseLock = async(key) => {
+const releaseLock = async (key) => {
     const lockKey = buildKey(key)
     const delStatus = await asyncDel(lockKey);
     return delStatus;

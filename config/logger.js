@@ -52,12 +52,12 @@ const logger = winston.createLogger({
 
 process.on('uncaughtException', (err) => {
     logger.error("-----------------------------------------------------------------------------")
-    logger.error({event: 'uncaughtException', msg: err.message, stack: err.stack })
+    logger.error({event: 'uncaughtException', error: { message: err.message, stack: err.stack }})
     logger.error("-----------------------------------------------------------------------------")
     process.exit(1);
 })
 
 
-logger.info({status: 'Logger started111.'});
+logger.info({event: 'LoggerStarted.'});
 module.exports = logger;
 

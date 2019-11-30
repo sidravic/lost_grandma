@@ -13,11 +13,11 @@ const CoordinatorService = require('../../services/image_services/coordinator');
 
 const DailyTriggerUploadToS3QueueWorker = async (job, done) => {
     const data = job.data;
-    logger.info({ src: 'DailyTriggerUploadToS3QueueWorker', data: job.id, status: 'started' });
+    logger.info({ src: 'DailyTriggerUploadToS3QueueWorker', data: {jobId: job.id, status: 'started'} });
     
     await new CoordinatorService().batch();
     console.log('Job done')
-    logger.info({ src: 'DailyTriggerUploadToS3QueueWorker', data: job.id, status: 'completed' });
+    logger.info({ src: 'DailyTriggerUploadToS3QueueWorker', data: {jobId: job.id, status: 'completed' }});
     done();
 }
 

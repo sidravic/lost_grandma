@@ -9,7 +9,7 @@ const ProductPersistService = require('./../services/product_persist_service');
 
 const PersistQueueWorker = async(job, done) => {
     const data = job.data;
-    logger.info({src: 'PersistQueueProcessor', data: job.id, status: 'started'});
+    logger.info({src: 'persist_queue', event: 'PersistQueueWorker', data: {jobId: job.id, status: 'started'}});
 
 
     const productPayload = JSON.parse(data);
@@ -21,7 +21,7 @@ const PersistQueueWorker = async(job, done) => {
     if(source){
         sourceUrl = source.source_url
     }
-    logger.info({src: 'PersistQueueProcessor', data: job.id, status: 'completed', url: sourceUrl})
+    logger.info({src: 'persist_queue', event: 'PersistQueueWorker', data: {jobId: job.id, status: 'completed', url: sourceUrl}})
     done();
 
 
