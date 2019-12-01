@@ -1,2 +1,4 @@
 *.env
 .envrc
+quick_queries
+node_modules
