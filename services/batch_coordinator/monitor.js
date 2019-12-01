@@ -57,7 +57,7 @@ const monitor = async (service, serviceName, invoker, queue) => {
             data: {queue: currentQueue.name.toString(), completed: batchCompleted.toString(), pendingCount: pendingCount.toString()}
         })
 
-        await sleep(5000);
+        await sleep(15000);
         [batchCompleted, pendingCount] = await checkBatchCompleted(currentQueue);
 
         if (batchCompleted) {
