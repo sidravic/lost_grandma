@@ -49,7 +49,7 @@ const getDownloadReadStreamWithoutProxy = async (imageUrl) => {
             return status >= 200 && status < 305
         },
         maxRedirects: 5,
-        timeout: 15000
+        timeout: 5000
     })
 
     return response.data;
