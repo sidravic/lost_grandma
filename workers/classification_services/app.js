@@ -7,7 +7,7 @@ const {ClassificationQueue, ClassificationQueueWorker} = require('./classificati
 ClassificationQueue.process('classification_queue', 1, ClassificationQueueWorker)
 
 ClassificationQueue.on('waiting', (jobId) => {
-    logger.info({
+    logger.debug({
         src: 'workers/classification_services/app.js',
         event: 'ClassificationQueue.waiting', data: {jobId: jobId}
     })

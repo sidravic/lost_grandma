@@ -5,14 +5,14 @@ const logger = require('../../config/logger');
 const redisUrl = process.env.REDIS_URL
 const SimilarImagesQueue = new Bull('similar_images_queue', redisUrl, {
     defaultJobOptions: {removeOnComplete: true},
-    limiter: {max: 1, duration: 5000},
+    limiter: {max: 5, duration: 5000},
 });
 
 // Avoid circular dependency loading problems
 const CoordinatorService = require('./../../services/similar_images_service/coordinator');
 
 SimilarImagesQueue.on('waiting', (jobId) => {
-    logger.info({src: 'similar_images_queue', event: 'SimilarImagesQueue.waiting', data: {jobId: jobId}})
+    logger.debug({src: 'similar_images_queue', event: 'SimilarImagesQueue.waiting', data: {jobId: jobId}})
 })
 
 SimilarImagesQueue.on('stalled', (jobId) => {

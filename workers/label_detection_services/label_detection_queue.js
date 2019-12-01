@@ -12,7 +12,7 @@ const LabelDetectionQueue = new Bull('label_detection_queue', redisUrl, {
 const CoordinatorService = require('./../../services/label_detection_services/coordinator');
 
 LabelDetectionQueue.on('waiting', (jobId) => {
-    logger.info({src: 'label_detection_queue', event: 'LabelDetectionQueue.waiting', data: {jobId: jobId}})
+    logger.debug({src: 'label_detection_queue', event: 'LabelDetectionQueue.waiting', data: {jobId: jobId}})
 })
 
 LabelDetectionQueue.on('stalled', (jobId) => {
