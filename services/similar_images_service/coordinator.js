@@ -41,13 +41,15 @@ const persistSimilarImages = async (service) => {
     })
 
     const imagePersistPromise = Promise.all(similarImages.map(async (similarImage) => {
-         let [image, error] = await syncError(Image.create(similarImage))
-         if (any(error)){
-             service.addErrors([error]);
-         } else {
-             service.newImages.push(image);
-         }
-    }))
+        try {
+            let image = await Image.create(similarImage)
+            service.newImages.push(image);
+            return;
+        }catch(error){
+            service.addErrors([error.message]);
+            return;
+        }
+    }));
 
     await imagePersistPromise;
     return service.newImages;

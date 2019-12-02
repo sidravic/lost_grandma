@@ -12,7 +12,7 @@ const SimilarImagesQueue = new Bull('similar_images_queue', redisUrl, {
 const CoordinatorService = require('./../../services/similar_images_service/coordinator');
 
 SimilarImagesQueue.on('waiting', (jobId) => {
-    logger.debug({src: 'similar_images_queue', event: 'SimilarImagesQueue.waiting', data: {jobId: jobId}})
+    logger.info({src: 'similar_images_queue', event: 'SimilarImagesQueue.waiting', data: {jobId: jobId}})
 })
 
 SimilarImagesQueue.on('stalled', (jobId) => {
