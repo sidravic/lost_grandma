@@ -27,7 +27,7 @@ const getDownloadReadStream = async (imageUrl) => {
         responseType: 'stream',
         httpAgent: SocksHttpAgent,
         httpsAgent: SocksAgent,
-        timeout: 5000,
+        timeout: 8000,
         validateStatus: (status) => {
             return status >= 200 && status < 305
         },
