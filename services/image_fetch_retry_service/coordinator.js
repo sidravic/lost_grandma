@@ -63,6 +63,7 @@ const retry = async (service) => {
         return;
     }catch(e) {
         logger.error({src: 'coordinator', event: 'persistS3Url', error: {message: e.message, stack: e.stack}})
+        return;
     }
 }
 
