@@ -5,7 +5,7 @@ const logger = require('../../config/logger');
 const redisUrl = process.env.REDIS_URL
 const SimilarImagesQueue = new Bull('similar_images_queue', redisUrl, {
     defaultJobOptions: {removeOnComplete: true},
-    limiter: {max: 5, duration: 5000},
+    limiter: {max: 1, duration: 1000},
 });
 
 // Avoid circular dependency loading problems
