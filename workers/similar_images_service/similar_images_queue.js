@@ -15,8 +15,11 @@ SimilarImagesQueue.on('waiting', (jobId) => {
     logger.info({src: 'similar_images_queue', event: 'SimilarImagesQueue.waiting', data: {jobId: jobId}})
 })
 
-SimilarImagesQueue.on('stalled', (jobId) => {
-    logger.info({src: 'similar_images_queue', event: 'SimilarImagesQueue.stalled', data: {jobId: jobId}})
+SimilarImagesQueue.on('stalled', async (job) => {
+    logger.error({src: 'similar_images_queue', event: 'SimilarImagesQueue.stalled', data: {jobId: job}})
+    await job.discard();
+    await job.moveToFailed(new Error('stalled for unknown reasons'), true)
+    return;
 })
 
 SimilarImagesQueue.on('progress', (job, progress) => {
