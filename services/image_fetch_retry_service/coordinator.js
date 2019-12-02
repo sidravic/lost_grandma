@@ -55,6 +55,7 @@ const retry = async (service) => {
     const processPromise = Promise.all(service.retryables.map(async (retryable) => {
         await uploadToS3(service, retryable)
         await persistS3Url(service, retryable);
+        return;
     }))
 
     try {
