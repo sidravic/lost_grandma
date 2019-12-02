@@ -2,3 +2,6 @@
 .envrc
 quick_queries
 node_modules
+.envrc
+.vscode
+download_images
