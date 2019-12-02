@@ -66,6 +66,7 @@ const uploadImagesToS3AndPersist = async (downloadableImagePayload, service) => 
                 data: {imageUrl: imageUrl, status: 'error'},
                 error: {message: e.message, stack: e.stack}
             })
+            return service.status;
         }
     }))
 }
