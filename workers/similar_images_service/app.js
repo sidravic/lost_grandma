@@ -5,6 +5,6 @@ logger.defaultMeta.service = 'similiar_images-queue-worker'
 const { SimilarImagesQueue, SimilarImagesQueueWorker } = require('./similar_images_queue');
 
 
-SimilarImagesQueue.process('similar_images_queue', 1, SimilarImagesQueueWorker)
+SimilarImagesQueue.process('similar_images_queue', 2, SimilarImagesQueueWorker)
 
 

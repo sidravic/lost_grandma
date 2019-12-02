@@ -4,7 +4,8 @@ const Bull = require('bull');
 const logger = require('../../config/logger');
 const redisUrl = process.env.REDIS_URL
 const SimilarImagesQueue = new Bull('similar_images_queue', redisUrl, {
-    defaultJobOptions: {removeOnComplete: true}
+    defaultJobOptions: {removeOnComplete: true},
+    settings: {maxStalledCount: 0}
     // limiter: {max: 1, duration: 1000},
 });
 
@@ -50,6 +51,7 @@ const SimilarImagesQueueWorker = async (job, done) => {
             event: 'processor',
             data: {success: true, productId: productId, projectId: batchId, response: serviceResponse}
         })
+        done();
     } catch (e) {
         logger.error({
             src: 'workers/similar_images_service/similar_images_queue.js',
@@ -57,10 +59,11 @@ const SimilarImagesQueueWorker = async (job, done) => {
             data: {success: false, productId: productId, batchId: batchId },
             error: {message: e.message, stack: e.stack}
         });
+        done();
     }
 
     // await ifCompleteTriggerNext(SimilarImagesQueue, LabelDetectionServiceTask);
-    done();
+
 }
 
 
