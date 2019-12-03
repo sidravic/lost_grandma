@@ -38,16 +38,20 @@ SimilarImagesQueue.on('progress', (job, progress) => {
  * @param {*} job
  * @param {*} done
  */
+const checkEventLoopBlocked = (done) => {
+
+    blocked((ms) => {
+        logger.error({ src: 'logger.js', event: 'EventLoopBlocked', data: {blockedFor: ms.toString()}})
+    }, {threshold: 1500, interval: 1000 })
+}
+
 const SimilarImagesQueueWorker = async (job, done) => {
     const data = JSON.parse(job.data);
     logger.info({src: 'SimiliarImagesQueueWorker', data: job.id, status: 'started'});
     const productId = data.productId;
     const batchId = data.batchId;
 
-    blocked((ms) => {
-        logger.error({ src: 'logger.js', event: 'EventLoopBlocked', data: {blockedFor: ms.toString()}})
-    }, {interval: 2000, interval: 1000 })
-
+    checkEventLoopBlocked(done);
     const service = new CoordinatorService();
     try {
         const serviceResponse = await service.invoke(productId, batchId);
