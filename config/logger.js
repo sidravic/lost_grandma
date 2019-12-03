@@ -1,6 +1,5 @@
 const winston = require('winston');
 const LogstashTransport = require('winston-logstash-transport').LogstashTransport;
-const blocked = require('blocked');
 
 
 const getTransports = () => {
@@ -57,10 +56,6 @@ process.on('uncaughtException', (err) => {
     logger.error("-----------------------------------------------------------------------------")
     process.exit(1);
 })
-
-blocked((ms) => {
-    logger.error({ src: 'logger.js', event: 'EventLoopBlocked', data: {blockedFor: ms.toString()}})
-}, {interval: 2000, interval: 1000 })
 
 
 logger.info({event: 'LoggerStarted.'});

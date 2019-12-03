@@ -2,6 +2,7 @@ const fs = require('fs')
 const util = require('util')
 const Bull = require('bull');
 const logger = require('../../config/logger');
+const blocked = require('blocked');
 const redisUrl = process.env.REDIS_URL
 const SimilarImagesQueue = new Bull('similar_images_queue', redisUrl, {
     defaultJobOptions: {removeOnComplete: true},
@@ -65,6 +66,11 @@ const SimilarImagesQueueWorker = async (job, done) => {
     // await ifCompleteTriggerNext(SimilarImagesQueue, LabelDetectionServiceTask);
 
 }
+
+
+blocked((ms) => {
+    logger.error({ src: 'logger.js', event: 'EventLoopBlocked', data: {blockedFor: ms.toString()}})
+}, {interval: 2000, interval: 1000 })
 
 
 module.exports.SimilarImagesQueue = SimilarImagesQueue;
