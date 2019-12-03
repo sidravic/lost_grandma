@@ -113,18 +113,19 @@ const retryFailedImages = async (downloadableImagePayload, service) => {
     const imageFetchRetryService = new ImageFetchRetryCoordinator();
     const s3uploadFailures = service.s3uploadFailures;
 
-    if(!any(s3uploadFailures)) { return }
+    if(!any(s3uploadFailures)) { return; }
+
     try {
         const retryResponse = await imageFetchRetryService.invoke(s3uploadFailures);
         service.retryResponse = retryResponse;
         logger.info({src: 'image_services/Coordinator', event: 'retryFailedImages', data: {status: 'success', path: retryResponse }})
+        return;
     }catch(e){
         service.addErrors([e.message]);
         service.errorCode = 'error_retrying_image_fetch'
         logger.info({src: 'image_services/Coordinator', event: 'retryFailedImages', data: {status: 'failed' }})
+        return;
     }
-    return;
-
 }
 
 class CoordinatorService extends BaseService {

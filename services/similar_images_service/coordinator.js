@@ -84,7 +84,7 @@ const uploadImagesToS3 = async (service) => {
         service.uploadedToS3Count = e.uploadStatus.length;
         service.imageServiceCoordinatorResponse = e;
         logger.error({src: 'similar_images_service/coordinator', event: 'uploadImagesToS3', error: { message: e.message, stack: e.stack, note: 'This is best effort. Not a deal breaker' }});
-        return;
+        return service.imageServiceCoordinatorResponse;
     }
 }
 
