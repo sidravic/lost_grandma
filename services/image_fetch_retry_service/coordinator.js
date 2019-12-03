@@ -17,12 +17,13 @@ const uploadToS3 = async (service, retryable, bucketName = process.env.S3_IMAGES
         const readstream = await getDownloadReadStreamWithoutProxy(retryable.imageUrl);
         const uploadStatus = await s3UploadFromInputStream(readstream, s3ObjectPath)
         retryable.uploadStatus = uploadStatus;
+        return retryable;
     } catch (e) {
         logger.error({src: 'image_fetch_retry/coordinator', event: 'uploadToS3', error: {message: e.message, stack: e.stack}})
         retryable.addErrors([e.message]);
         retryable.errorCode = 'error_retrying_upload_to_s3';
+        return retryable;
     }
-    return retryable;
 };
 
 const persistS3Url = async (service, retryable) => {
@@ -33,12 +34,14 @@ const persistS3Url = async (service, retryable) => {
     try {
         const updateStatus = await Image.update({s3_image_url: retryable.uploadStatus.Location.toString()}, {where: {id: retryable.imageId}})
         retryable.persistStatus = updateStatus;
+        return retryable;
     } catch (e) {
         logger.error({src: 'image_fetch_retry/coordinator', event: 'persistS3Url', error: {message: e.message, stack: e.stack}})
         retryable.addErrors([e.message]);
         retryable.errorCode = 'error_persisting_retried_s3_url';
+        return retryable;
     }
-    return retryable;
+
 }
 
 const retry = async (service) => {

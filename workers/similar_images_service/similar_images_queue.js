@@ -57,14 +57,14 @@ const SimilarImagesQueueWorker = async (job, done) => {
         const serviceResponse = await service.invoke(productId, batchId);
         logger.info({
             src: 'workers/similar_images_service/similar_images_queue.js',
-            event: 'processor',
+            event: 'similar_images_queue/processor',
             data: {success: true, productId: productId, projectId: batchId, response: serviceResponse}
         })
         done();
     } catch (e) {
         logger.error({
             src: 'workers/similar_images_service/similar_images_queue.js',
-            event: 'processor',
+            event: 'similar_images_queue/processor',
             data: {success: false, productId: productId, batchId: batchId },
             error: {message: e.message, stack: e.stack}
         });

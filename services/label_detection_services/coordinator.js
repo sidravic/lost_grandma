@@ -64,6 +64,7 @@ const fetchLabels = async (service) => {
             status: 'completed',
             data: {labels: labelsDetected, imageBlob: imageBlob}
         });
+        return;
     } catch (e) {
         logger.info({
             src: 'Coordinator',
@@ -74,6 +75,7 @@ const fetchLabels = async (service) => {
         });
         service.addErrors([e.message]);
         service.errorCode = 'error_fetching_labels'
+        return;
     }
 }
 
@@ -215,6 +217,7 @@ class Coordinator extends BaseService {
             }))
         } catch (e) {
             logger.error({src: 'Coordinator', event: 'invoke', data: {}, error: {message: e.message, stack: e.stack}})
+            return new Promise((r, reject) => { reject(e) });
         }
     }
 }
