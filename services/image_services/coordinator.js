@@ -18,7 +18,7 @@ const onEachBatch = (products) => {
     downloadableProductImages.map(async (dpi, index) => {
         const retryOptions = {removeOnComplete: true, removeOnFail: true, attempts: 0}
         const job = await UploadToS3Queue.add('upload_to_s3_queue', JSON.stringify(dpi), retryOptions);
-        logger.info({src: 'Coordinator', event: 'ImageAddedToDownloadQueue', data: {downloadImagePayload: dpi}});
+        logger.info({src: 'image_services/Coordinator', event: 'ImageAddedToDownloadQueue', data: {downloadImagePayload: dpi}});
     });
 }
 
@@ -39,7 +39,7 @@ const uploadImagesToS3AndPersist = async (downloadableImagePayload, service) => 
             let uploadStatus = await s3StoreObjectFromImageUrl(s3ObjectPath, imageUrl)
             logger.info({
                 event: 'downloadImages',
-                src: 'Coordinator',
+                src: 'image_services/Coordinator',
                 data: {folderName: folderName, status: 'complete'}
             })
             const persistStatus = await persistS3Url(uploadStatus, imageUrl, imageUrlToId, service);
@@ -62,7 +62,7 @@ const uploadImagesToS3AndPersist = async (downloadableImagePayload, service) => 
             service.errorCode = 'error_uploading_images_to_s3';
             logger.error({
                 event: 'downloadImages',
-                src: 'Coordinator',
+                src: 'image_services/Coordinator',
                 data: {imageUrl: imageUrl, status: 'error'},
                 error: {message: e.message, stack: e.stack}
             })
@@ -76,12 +76,12 @@ const persistS3Url = async (uploadStatus, imageUrl, imageUrlToId, service) => {
     const imageId = imageUrlToId[imageUrl];
     try {
         const persistStatus = await Image.update({s3_image_url: uploadStatus.Location.toString()}, {where: {id: imageId}})
-        logger.info({event: 'persistS3Url', src: 'Coordinator', data: {imageUrl: imageUrl, status: 'completed'}})
+        logger.info({event: 'persistS3Url', src: 'image_services/Coordinator', data: {imageUrl: imageUrl, status: 'completed'}})
         return persistStatus;
     } catch (e) {
         logger.error({
             event: 'persistS3Url',
-            src: 'Coordinator',
+            src: 'image_services/Coordinator',
             data: {imageUrl: imageUrl, status: 'error'},
             error: {message: e.message, stack: e.stack}
         })
@@ -98,11 +98,11 @@ const createMetadataFile = async (downloadableImagePayload, service) => {
 
     try {
         const metadataUploadStatus = await s3UploadFromInputStream(JSON.stringify(downloadableImagePayload), s3ObjectPath);
-        logger.info({src: 'Coordinator', event: 'createMetaDataFile', data: {status: 'success', path: s3ObjectPath}})
+        logger.info({src: 'image_services/Coordinator', event: 'createMetaDataFile', data: {status: 'success', path: s3ObjectPath}})
         service.metadataUploadStatus = metadataUploadStatus;
         return service.metadataUploadStatus;
     } catch (e) {
-        logger.info({src: 'Coordinator', event: 'createMetaDataFile', data: {status: 'success', path: s3ObjectPath}})
+        logger.info({src: 'image_services/Coordinator', event: 'createMetaDataFile', data: {status: 'success', path: s3ObjectPath}})
         service.addErrors([e.message]);
         service.errorCode('error_uploading_metadata.json');
     }
@@ -117,11 +117,11 @@ const retryFailedImages = async (downloadableImagePayload, service) => {
     try {
         const retryResponse = await imageFetchRetryService.invoke(s3uploadFailures);
         service.retryResponse = retryResponse;
-        logger.info({src: 'Coordinator', event: 'retryFailedImages', data: {status: 'success', path: retryResponse }})
+        logger.info({src: 'image_services/Coordinator', event: 'retryFailedImages', data: {status: 'success', path: retryResponse }})
     }catch(e){
         service.addErrors([e.message]);
         service.errorCode = 'error_retrying_image_fetch'
-        logger.info({src: 'Coordinator', event: 'retryFailedImages', data: {status: 'failed' }})
+        logger.info({src: 'image_services/Coordinator', event: 'retryFailedImages', data: {status: 'failed' }})
     }
     return;
 
@@ -182,7 +182,7 @@ class CoordinatorService extends BaseService {
         } catch (e) {
             logger.error({
                 event: 'downloadImage',
-                src: 'Coordinator',
+                src: 'image_services/Coordinator',
                 data: {folderName: downloadableImagePayload},
                 error: {message: e.message, stack: e.stack}
             })

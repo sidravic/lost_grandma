@@ -18,7 +18,7 @@ const uploadToS3 = async (service, retryable, bucketName = process.env.S3_IMAGES
         const uploadStatus = await s3UploadFromInputStream(readstream, s3ObjectPath)
         retryable.uploadStatus = uploadStatus;
     } catch (e) {
-        logger.error({src: 'coordinator', event: 'uploadToS3', error: {message: e.message, stack: e.stack}})
+        logger.error({src: 'image_fetch_retry/coordinator', event: 'uploadToS3', error: {message: e.message, stack: e.stack}})
         retryable.addErrors([e.message]);
         retryable.errorCode = 'error_retrying_upload_to_s3';
     }
@@ -34,7 +34,7 @@ const persistS3Url = async (service, retryable) => {
         const updateStatus = await Image.update({s3_image_url: retryable.uploadStatus.Location.toString()}, {where: {id: retryable.imageId}})
         retryable.persistStatus = updateStatus;
     } catch (e) {
-        logger.error({src: 'coordinator', event: 'persistS3Url', error: {message: e.message, stack: e.stack}})
+        logger.error({src: 'image_fetch_retry/coordinator', event: 'persistS3Url', error: {message: e.message, stack: e.stack}})
         retryable.addErrors([e.message]);
         retryable.errorCode = 'error_persisting_retried_s3_url';
     }
@@ -62,7 +62,7 @@ const retry = async (service) => {
         await processPromise
         return;
     }catch(e) {
-        logger.error({src: 'coordinator', event: 'persistS3Url', error: {message: e.message, stack: e.stack}})
+        logger.error({src: 'image_fetch_retry/coordinator', event: 'persistS3Url', error: {message: e.message, stack: e.stack}})
         return;
     }
 }
