@@ -11,6 +11,7 @@ const findProductsForClassification = async (project) => {
 
     const op = Sequelize.Op;
     const options = {
+        ignoreBatchSizeChecks: true,
         attributes: [ 'id', 'name', 'cosmetics_brand_id', 'categories'],
         includedModels: [{
             model: Brand,
@@ -90,5 +91,3 @@ const getApplicableIds = async() => {
 
 
 module.exports = main;
-
-

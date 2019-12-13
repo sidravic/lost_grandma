@@ -1,6 +1,6 @@
 const logger = require('./../../config/logger.js');
 const {BaseService, BaseServiceResponse} = require('./../base_service');
-const {createTag, batchUploadImages} = require('./azure_classifier_training');
+const {createTag, batchUploadImages, deleteTag, deleteImages} = require('./azure_classifier_training');
 const getSignedGETUrlFromS3Url = require('./../image_services/s3_operations').getSignedGETUrlFromS3Url;
 const Constants = require('./../constants')
 const addUploadStatusesToRedis = require('./classified_products_for_project').addUploadStatusesToRedis;
@@ -23,6 +23,18 @@ const filterImagesByLabels = async (service) => {
 
     service.validImages = selectedImages;
     return service.validImages;
+}
+
+const filterByS3ImageUrl =  async (service) => {
+    const validImages = service.validImages;
+
+    const imagesWithS3Url = validImages.filter((image) => {
+        return (image.s3_image_url == null) ? false : true;
+    })
+
+    service.validImages = imagesWithS3Url;
+    return service.validImages;
+
 }
 
 const check5ValidImages = (service) => {
@@ -62,7 +74,6 @@ const uploadImageToClassifier = async (service) => {
     batch.tagIds.push(imageTagId);
 
     const uploadResponse = await batchUploadImages(service.classifierProject, batch);
-    await addUploadStatusesToRedis(service.classifierProject, service.product.id, uploadResponse);
     if (!uploadResponse.isBatchSuccessful) {
         const errors = uploadResponse.images.map((image) => {
             return image.status;
@@ -74,10 +85,38 @@ const uploadImageToClassifier = async (service) => {
             event: 'uploadImageToClassifier',
             error: {message: errors, uploadResponse: uploadResponse, projectId: service.classifierProject.id}
         })
-    }
-    service.uploadResponse = uploadResponse
+    };
+    service.uploadResponse = uploadResponse;
+    service.imageTagId = imageTagId;
     return uploadResponse;
+}
 
+const deleteImagesAndTagIfLessThan5Images = async(service) => {
+
+    const uploadResponse = service.uploadResponse;
+    const images = uploadResponse.images;
+    const OkImages = [];
+    const ErrorImages = [];
+
+    images.map(async(image) => {
+        if (image.status == 'OK') {
+            OkImages.push(image)
+        } else {
+            ErrorImages.push(image)
+        }
+    });
+
+    if (OkImages.length < 5){
+        const deleteTagResponse = await deleteTag(service.classifierProject, service.imageTagId);
+        logger.info({src: 'classification_services/coordinator', event: 'deleteImagesAndTagIfLessThan5Images', data: { deleteTagResponse: deleteTagResponse }})
+        const imageIds = images.map((image) => {return image.image.id})
+        const deleteImagesResponse = await deleteImages(service.classifierProject, imageIds);
+        logger.info({src: 'classification_services/coordinator', event: 'deleteImagesAndTagIfLessThan5Images', data: { deleteImagesResponse: deleteImagesResponse }})
+    } else{
+        await addUploadStatusesToRedis(service.classifierProject, service.product.id, uploadResponse);
+    }
+
+    return;
 }
 
 class Coordinator extends BaseService {
@@ -97,8 +136,10 @@ class Coordinator extends BaseService {
         this.classifierProject = classifierProject;
 
         await filterImagesByLabels(this);
+        await filterByS3ImageUrl(this);
         await check5ValidImages(this);
         await uploadImageToClassifier(this);
+        await deleteImagesAndTagIfLessThan5Images(this);
 
         return (new Promise((resolve, reject) => {
             if (this.anyErrors()) {

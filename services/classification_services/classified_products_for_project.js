@@ -5,7 +5,7 @@ const addProductToProject =  async (projectId, productId) => {
     if ((!projectId) || (!productId)) {
         throw new Error('projectId and productId cannot be null');    }
 
-    const key = `set:${projectId}`;
+    const key = `classification:set:${projectId}`;
     const addStatus = await(asyncSAdd(key, productId));
 
     return addStatus;
@@ -16,7 +16,7 @@ const addImageForClassifiedProject = async (projectId, productId, imageUrl) => {
         throw new Error('projectId and productId cannot be null');
     }
 
-    const key = `set:${projectId}:${productId}`;
+    const key = `classificationImages:set:${projectId}:${productId}`;
     const addStatus = await(asyncSAdd(key, imageUrl))
     return addStatus;
 }

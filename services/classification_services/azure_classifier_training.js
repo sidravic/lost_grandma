@@ -48,6 +48,14 @@ const batchUploadImages = async (project, batch) => {
     return (await trainer.createImagesFromUrls(project.id, batch, options));
 }
 
+const deleteTag = async(project, tagId) => {
+    return await trainer.deleteTag(project.id, tagId)
+}
+
+const deleteImages = async(project, imageIds) => {
+    return await trainer.deleteImages(project.id, imageIds);
+}
+
 const createTag = async(project, name) => {
      return await trainer.createTag(project.id, name)
 }
@@ -56,4 +64,6 @@ const createTag = async(project, name) => {
 module.exports.createTrainingProject = createTrainingProject;
 module.exports.batchUploadImages = batchUploadImages;
 module.exports.createTag = createTag;
+module.exports.deleteTag = deleteTag;
+module.exports.deleteImages = deleteImages;
 //https://www.customvision.ai/projects

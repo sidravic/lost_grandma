@@ -6,6 +6,7 @@ const { any, isEmpty } = require('./../utils');
 const findInBatches = async (modelName, batchSize, onBatch, options) => {
     const noop = () => { }
     const callback = onBatch || noop;
+    const ignoreBatchSizeChecks = options.ignoreBatchSizeChecks || false;
 
     if (!options) options = {};
 
@@ -52,7 +53,11 @@ const findInBatches = async (modelName, batchSize, onBatch, options) => {
             };
 
             if (products.length < batchSize){
-                return (new Promise((resolve, reject) => { resolve()}))
+                if(!ignoreBatchSizeChecks) {
+                    return (new Promise((resolve, reject) => {
+                        resolve()
+                    }))
+                }
             }
         }
         return (new Promise((resolve, reject) => { resolve() }))
