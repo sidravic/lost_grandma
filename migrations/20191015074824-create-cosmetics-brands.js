@@ -38,7 +38,9 @@ module.exports = {
             });
         }
 
-        //await enablePgCryptoExtension();
+        if(process.env.NODE_ENV == "test"){
+            await enablePgCryptoExtension();
+        }
         await createBrands();
 
     },
