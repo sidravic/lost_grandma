@@ -1,0 +1,258 @@
+{
+  "id": "f93c8446-663a-4625-8538-1795b8b6f0da",
+  "project": "13d5bff9-0bb4-448c-ab5d-e154516dcda2",
+  "iteration": "2dec0907-f890-44fa-80bd-343fd5587cbf",
+  "created": "2019-12-13T18:15:59.879Z",
+  "predictions": [
+    {
+      "probability": 0.917695456,
+      "tagId": "89d3eab9-2ae3-4afa-b51f-77bea13df5b2",
+      "tagName": "95e12c34-129f-4c91-b03a-2b4c644dbb38"
+    },
+    {
+      "probability": 0.004522745,
+      "tagId": "4be91cfb-5f29-46f2-9f9e-e1556ea20d20",
+      "tagName": "94b13c9e-3628-468f-99ca-266c95f894ea"
+    },
+    {
+      "probability": 0.00361471251,
+      "tagId": "f8938681-53e7-4929-8e40-05d2fe627f8f",
+      "tagName": "1e16f982-9d7c-4748-8873-d74ede7ca9c1"
+    },
+    {
+      "probability": 0.00236854586,
+      "tagId": "403aa21c-51da-4bcb-b50e-82d8328ccdcf",
+      "tagName": "95f9e5ed-3345-4428-87af-745c339dd901"
+    },
+    {
+      "probability": 0.00129200926,
+      "tagId": "0886375a-0a95-4d7e-9265-e22305284e03",
+      "tagName": "6ac79858-458c-467b-91f8-898e99f157bf"
+    },
+    {
+      "probability": 0.0002423749,
+      "tagId": "b355a2be-d673-480f-b53d-2cbb2d21483b",
+      "tagName": "2db7405b-a2a1-48f6-bd56-f6b3919150f1"
+    },
+    {
+      "probability": 0.00008337257,
+      "tagId": "9852449a-ffa3-4779-81f4-4834c27b043e",
+      "tagName": "c685150a-5760-47f3-a2f4-78dc4ab79366"
+    },
+    {
+      "probability": 0.0000606144131,
+      "tagId": "8b28d208-b6b1-41dc-9785-ea4b2faa5e9f",
+      "tagName": "9f77c854-bbc0-461e-99d7-b69704c969a9"
+    },
+    {
+      "probability": 0.0000214910178,
+      "tagId": "521eb59e-eb04-4c32-a6d0-e3608b8c4a60",
+      "tagName": "6527a6a9-f1de-4602-9353-b29ca84498d9"
+    },
+    {
+      "probability": 0.0000170687326,
+      "tagId": "1e1814da-4195-4ede-862d-2e88a237bc8d",
+      "tagName": "8820d68b-01f3-44b8-a5bb-d8ff02cfc2ca"
+    },
+    {
+      "probability": 0.0000148354429,
+      "tagId": "e2938e34-be09-4b15-9510-0cc5e673593e",
+      "tagName": "dc770aba-9afa-49a3-bb8e-ec3f564fcb0b"
+    },
+    {
+      "probability": 0.0000130955032,
+      "tagId": "1c8df303-fa8f-4e97-bdcc-46d54a15f2b4",
+      "tagName": "678f7f28-74e4-4c23-89ba-cea9a6dc981f"
+    },
+    {
+      "probability": 0.000012024344,
+      "tagId": "7bbca579-5677-4845-8f84-6450427b1d31",
+      "tagName": "c82aac0a-08f3-4151-9c39-ed90d84884e8"
+    },
+    {
+      "probability": 0.000008940609,
+      "tagId": "2390f0ed-3686-4835-88f7-939996155516",
+      "tagName": "4b325cb4-116e-4afe-8d29-7d0c5d9acf76"
+    },
+    {
+      "probability": 0.00000747440572,
+      "tagId": "7e6e7bd2-4f24-4db8-b876-31fb2eac468a",
+      "tagName": "acd13970-663c-4dab-bfec-5c367ae69e2c"
+    },
+    {
+      "probability": 0.00000640033568,
+      "tagId": "f6fb4e1e-04e4-4990-9ac7-b560dc4ed36b",
+      "tagName": "26104bf8-466c-4314-8ffe-8e969a7af3d7"
+    },
+    {
+      "probability": 0.0000042974084,
+      "tagId": "67cd5987-5db1-424e-8478-c5f0443eac0f",
+      "tagName": "a4320efd-f9e2-455f-8fbf-5dbf27a1799c"
+    },
+    {
+      "probability": 0.00000301506952,
+      "tagId": "7cfa64fa-d6aa-4f85-a092-97c6b1a0c0b4",
+      "tagName": "6bfac6d3-63db-4d81-9ec5-09b7fd1930fc"
+    },
+    {
+      "probability": 0.00000256720114,
+      "tagId": "12a66704-88fd-4f06-a0b4-a41980ca9194",
+      "tagName": "3ff5d8b9-d972-4a3c-8a78-af1ccd390d1c"
+    },
+    {
+      "probability": 0.0000013873256,
+      "tagId": "2879d31c-26b4-4699-bcae-2d649d4ac67c",
+      "tagName": "10e84cc6-12a0-49ec-af34-f9d5c9cf30b9"
+    },
+    {
+      "probability": 0.00000106747871,
+      "tagId": "568e287e-db2d-4f22-85b2-4f0bfc6f017d",
+      "tagName": "c13f89a2-1b65-4455-97bf-7d1fa09c1bfe"
+    },
+    {
+      "probability": 8.868406e-7,
+      "tagId": "be6f031a-f123-42c7-be40-7edfe10b1f1d",
+      "tagName": "4d375890-f299-4be2-a6af-bb21e3d5e64b"
+    },
+    {
+      "probability": 6.832092e-7,
+      "tagId": "28cfd558-89d4-4223-b3bc-4df1de36e7e6",
+      "tagName": "85c69faa-e0cd-4fb6-aa3f-b9d412350f15"
+    },
+    {
+      "probability": 6.778659e-7,
+      "tagId": "0a521d3e-408d-42a2-89ce-281eb3c6cf49",
+      "tagName": "dac69eaf-047d-424a-a9d3-cb67d7189fa7"
+    },
+    {
+      "probability": 5.718381e-7,
+      "tagId": "b34dde9d-9855-4d4b-be1c-105311a7fa8e",
+      "tagName": "688536e2-6669-4e99-956b-f60df0ffae0a"
+    },
+    {
+      "probability": 4.972937e-7,
+      "tagId": "cb358496-516f-4429-acbb-675e41f9f300",
+      "tagName": "3948b3aa-4bc0-4749-8731-cc98475fcacc"
+    },
+    {
+      "probability": 4.60172856e-7,
+      "tagId": "6377add3-6305-4e4d-becf-761cd547a99d",
+      "tagName": "8f7c111a-29cc-4848-9164-bcbfb213a3fa"
+    },
+    {
+      "probability": 4.31167138e-7,
+      "tagId": "a7c884d1-780f-49ff-9256-c38d2815da87",
+      "tagName": "193350d6-93f3-4e3d-aace-a44c265cb6ef"
+    },
+    {
+      "probability": 4.075848e-7,
+      "tagId": "b836c857-92ee-4a73-a8f3-807ad86394a1",
+      "tagName": "37f0ec01-32d3-44c5-ba9d-79c45daae7aa"
+    },
+    {
+      "probability": 3.71886443e-7,
+      "tagId": "b7558e9a-218f-4bec-b984-fe45c21e2ae3",
+      "tagName": "dc533bac-f80a-422a-9cef-9c9178324723"
+    },
+    {
+      "probability": 2.79257534e-7,
+      "tagId": "b434d774-2b87-421c-a14d-def263ecdb2d",
+      "tagName": "772151c4-08ad-4ba8-b827-f06f0c0f0c3c"
+    },
+    {
+      "probability": 1.83783655e-7,
+      "tagId": "3889d2af-bb7c-4b40-ab12-8590ba1dab22",
+      "tagName": "6d0b6130-8a8a-4652-a260-8efe221f3aa5"
+    },
+    {
+      "probability": 1.71132456e-7,
+      "tagId": "ba78d038-5dd2-43fc-81a8-a4239c06f2cb",
+      "tagName": "0111fbbb-2f18-4215-858e-99a188184500"
+    },
+    {
+      "probability": 1.69482632e-7,
+      "tagId": "ce20aee5-ce1f-4c6c-9819-5b104ef7e732",
+      "tagName": "112d7453-05bd-4060-9c94-8d09cb469706"
+    },
+    {
+      "probability": 1.41884883e-7,
+      "tagId": "7f546e68-34d6-4f65-bc8b-9f6fc82f1a6d",
+      "tagName": "f6a88ae3-2a3a-4fd4-82f5-4746198c2ad7"
+    },
+    {
+      "probability": 1.251405e-7,
+      "tagId": "138a9acb-3375-49ad-859f-eb42631be0f8",
+      "tagName": "1ca1edcb-f996-4ece-95dd-0185de725a2f"
+    },
+    {
+      "probability": 9.726574e-8,
+      "tagId": "33880ca9-857b-431c-b51e-422f5f253ced",
+      "tagName": "da943a1a-993c-4ea5-96a9-d3ef7877f357"
+    },
+    {
+      "probability": 7.328125e-8,
+      "tagId": "bdbded40-a3c0-4962-a1d0-8a5e5d1e6bef",
+      "tagName": "c1ab833c-3d6b-4387-85eb-6353ecae3cc2"
+    },
+    {
+      "probability": 5.8235436e-8,
+      "tagId": "2e48889b-af3d-4e0b-a82a-a164fc733f21",
+      "tagName": "b1b1e1b3-3885-4a2b-aafe-19638f627742"
+    },
+    {
+      "probability": 4.85474e-8,
+      "tagId": "c9b02340-0a18-439c-ab2b-2c8c248cb3d0",
+      "tagName": "c2376fd4-7425-4c1f-ab5b-6354104897bd"
+    },
+    {
+      "probability": 3.721073e-8,
+      "tagId": "57a28f49-05d0-46d6-8e3a-5573769cd59f",
+      "tagName": "167aa95c-9f90-4ac1-a986-de8b690675f3"
+    },
+    {
+      "probability": 2.5867509e-8,
+      "tagId": "b8686b6d-717b-44f5-8fe1-d09cdac5abe0",
+      "tagName": "387ba7bb-ccc3-41a4-a1ad-e859fdec3b6a"
+    },
+    {
+      "probability": 7.601112e-9,
+      "tagId": "a188a6a8-d14c-4461-9347-0c96ae960d7b",
+      "tagName": "1b816941-be2a-4ceb-b505-32781b2ac096"
+    },
+    {
+      "probability": 6.191871e-9,
+      "tagId": "96224800-857a-4e2d-8be3-65d514bb1049",
+      "tagName": "1b02b576-dd01-42dc-b234-c3c81d98589d"
+    },
+    {
+      "probability": 6.053295e-9,
+      "tagId": "4dd952ce-ac6a-4644-9766-4d802c4061d5",
+      "tagName": "ab7bcab3-8467-41ec-bf2d-721d9226160d"
+    },
+    {
+      "probability": 5.243659e-9,
+      "tagId": "e81bf3d6-3208-4ba9-b41b-6f9de794aca7",
+      "tagName": "d57420a5-f2f8-46b0-847c-f4b5287f3970"
+    },
+    {
+      "probability": 4.32303526e-9,
+      "tagId": "8d426a20-e3c0-4357-8eeb-e2dd7667122a",
+      "tagName": "14995621-9c5b-4fd7-9e74-3c7fa0d6855f"
+    },
+    {
+      "probability": 2.04057371e-9,
+      "tagId": "e6e6b38a-7319-48c4-9118-d77f0196c091",
+      "tagName": "7f1b80b1-6e60-4a22-bd37-a300a6039cbe"
+    },
+    {
+      "probability": 1.0059158e-9,
+      "tagId": "72f98600-07c1-4569-b257-719c3c736d74",
+      "tagName": "b2cdc228-a6b9-4c9d-8b58-d072d2d0366f"
+    },
+    {
+      "probability": 4.12053724e-10,
+      "tagId": "45932236-9406-4aad-ba46-36222f811d63",
+      "tagName": "c289d003-973a-42c0-af93-e616709b54d2"
+    }
+  ]
+}

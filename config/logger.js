@@ -25,14 +25,14 @@ const getFormats = () => {
     let formats = null;
     if (process.env.NODE_ENV == 'development') {
         formats = winston.format.combine(
-            winston.format.json(),            
+            winston.format.json(),
             winston.format.timestamp({
                 format: 'YYYY-MM-DD HH:mm:ss'
             })
         )
     } else {
         formats = winston.format.combine(
-            winston.format.json(),            
+            winston.format.json(),
             winston.format.timestamp({
                 format: 'YYYY-MM-DD HH:mm:ss'
             })
@@ -49,13 +49,14 @@ const logger = winston.createLogger({
     transports: getTransports()
 });
 
-
-process.on('uncaughtException', (err) => {
-    logger.error("-----------------------------------------------------------------------------")
-    logger.error({event: 'uncaughtException', error: { message: err.message, stack: err.stack }})
-    logger.error("-----------------------------------------------------------------------------")
-    process.exit(1);
-})
+if (process.env.NODE_ENV != 'test') {
+    process.on('uncaughtException', (err) => {
+        logger.error("-----------------------------------------------------------------------------")
+        logger.error({event: 'uncaughtException', error: {message: err.message, stack: err.stack}})
+        logger.error("-----------------------------------------------------------------------------")
+        process.exit(1);
+    })
+}
 
 
 logger.info({event: 'LoggerStarted.'});

@@ -4,7 +4,7 @@
   "description": "Crawls sephora website for details",
   "main": "app.js",
   "scripts": {
-    "test": "npm test"
+    "test": "NODE_ENV=test ./node_modules/mocha/bin/mocha test --recursive"
   },
   "keywords": [
     "crawler"
@@ -41,6 +41,7 @@
     "chai": "^4.2.0",
     "mocha": "^6.2.2",
     "nodemon": "^2.0.1",
-    "pm2": "^4.2.0"
+    "pm2": "^4.2.0",
+    "sinon": "^7.5.0"
   }
 }

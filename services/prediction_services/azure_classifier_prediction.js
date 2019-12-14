@@ -1,4 +1,4 @@
-const logger = require('./../../config/logger.js');
+const logger = require('../../config/logger.js');
 const { PredictionAPIClient } = require("@azure/cognitiveservices-customvision-prediction");
 const urlPredictionEndpoint = process.env.AZURE_CUSTOM_VISION_CLASSIFIER_PREDICITION_ENDPOINT;
 const predictionKey = process.env.AZURE_CUSTOM_VISION_CLASSIFIER_PREDICTION_KEY;
@@ -11,7 +11,11 @@ const predictUrl = async(projectId, imageUrl, endpoint=urlPredictionEndpoint) =>
     return predictionResponse;
 }
 
+const azurePredict = {
+    predictUrl: predictUrl
+}
 
 
-module.exports.predictUrl = predictUrl;
+
+module.exports = azurePredict;
 
