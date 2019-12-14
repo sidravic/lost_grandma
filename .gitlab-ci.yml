@@ -18,10 +18,14 @@ build:
   script:
     - npm install
 
+before_script:
+  - apt-get update
+  - apt-get install -y postgresql-client
+  - psql -U runner -d lost_grandma_test -c "CREATE EXTENSION IF NOT EXISTS pgcrypto;"
+
 test:
   stage: test
   script:
-    - sudo -u postgres psql -U runner -d lost_grandma_test -c "CREATE EXTENSION IF NOT EXISTS pgcrypto;"
     - NODE_ENV=test npx sequelize db:migrate
     - npm test
 
