@@ -21,7 +21,7 @@ build:
 test:
   stage: test
   script:
-    - psql -U runner -d lost_grandma_test -c "CREATE EXTENSION IF NOT EXISTS pgcrypto;"
+    - sudo -u postgres psql -U runner -d lost_grandma_test -c "CREATE EXTENSION IF NOT EXISTS pgcrypto;"
     - NODE_ENV=test npx sequelize db:migrate
     - npm test
 
