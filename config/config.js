@@ -12,7 +12,7 @@ module.exports = {
         operatorAliases: true
     },
     test: {
-        url: "postgres://sidravic:sidravic@10.0.0.6:5432/lost_grandma_test",
+        url: process.env.TEST_DB_URL,
         database: "lost_grandma_test",
         dialect: "postgres",
         operatorAliases: true
