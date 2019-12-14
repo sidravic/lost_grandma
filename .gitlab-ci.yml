@@ -21,5 +21,8 @@ build:
 test:
   stage: test
   script:
+    - NODE_ENV=test npx sequelize db:create
+    - NODE_ENV=test npx sequelize db:migrate
+    - psql -U runner -d lost_grandma_test -c "CREATE EXTENSION IF NOT EXISTS pgcrypto;"
     - npm test
 
