@@ -83,6 +83,25 @@ const findLastClassified = async () => {
     return classificationProject;
 }
 
+const publishProject = async (publishIterationName, project) => {
+
+    const updateStatus = await ClassificationProject.update({
+        status: ClassificationProject.defaultStates.PUBLISHED,
+        is_active: true
+    }, {where: {iteration_name: publishIterationName, project_id: project.project_id}})
+
+    return updateStatus;
+}
+
+const setProjectStatusToTraining = async (publishIterationName, project) => {
+    const updateStatus = await ClassificationProject.update({
+        iteration_name: publishIterationName,
+        iteration_created_at: new Date(),
+        status: ClassificationProject.defaultStates.TRAINING
+    }, {where: {project_id: project.project_id}});
+    return updateStatus;
+}
+
 const trainProjectAndPublish = async (project) => {
     const response = {trainingIteration: null, publishedIteration: null};
     const predictionResourceId = process.env.AZURE_CUSTOM_VISION_PREDICTION_RESOURCE_ID
@@ -90,10 +109,7 @@ const trainProjectAndPublish = async (project) => {
     const publishIterationName = getIterationName();
     logger.info({src: 'classification_service/azure_classifier_training', event: 'trainAndPublish'})
 
-    await ClassificationProject.update({
-        iteration_name: publishIterationName,
-        status: ClassificationProject.defaultStates.TRAINING
-    }, {where: {project_id: project.project_id}});
+    await setProjectStatusToTraining(publishIterationName, project)
 
     while (trainingIteration.status == "Training") {
         console.log("Training status: " + trainingIteration.status);
@@ -106,10 +122,7 @@ const trainProjectAndPublish = async (project) => {
     const publishedIteration = await trainer.publishIteration(project.project_id, trainingIteration.id,
         publishIterationName, predictionResourceId)
 
-    await ClassificationProject.update({
-        status: ClassificationProject.defaultStates.PUBLISHED,
-        is_active: true
-    }, {where: {iteration_name: publishIterationName, project_id: project.project_id}})
+    await publishProject(publishIterationName, project);
     response.publishedIteration = publishedIteration;
     return response;
 }

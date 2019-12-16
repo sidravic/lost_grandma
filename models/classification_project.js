@@ -6,7 +6,8 @@ const dbConn = require('./../config/db');
 const defaultStates = {
     UPLOADING: 'uploading',
     TRAINING: 'training',
-    PUBLISHED: 'published'
+    PUBLISHED: 'published',
+    UNPUBLISHED: 'unpublished'
 }
 
 class ClassificationProject extends Sequelize.Model {
@@ -17,6 +18,7 @@ class ClassificationProject extends Sequelize.Model {
             project_id: {type: Sequelize.UUID, allowNull: false, unique: true},
             status: {type: Sequelize.STRING, allowNull: false, defaultValue: defaultStates.UPLOADING},
             iteration_name: {type: Sequelize.STRING, allowNull: true},
+            iteration_created_at: {type: Sequelize.DATE, allowNull: false},
             is_active: {type: Sequelize.BOOLEAN, defaultValue: false},
             createdAt: {allowNull: false, type: Sequelize.DATE},
             updatedAt: {allowNull: false, type: Sequelize.DATE}
