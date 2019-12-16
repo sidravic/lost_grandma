@@ -18,7 +18,7 @@ class ClassificationProject extends Sequelize.Model {
             project_id: {type: Sequelize.UUID, allowNull: false, unique: true},
             status: {type: Sequelize.STRING, allowNull: false, defaultValue: defaultStates.UPLOADING},
             iteration_name: {type: Sequelize.STRING, allowNull: true},
-            iteration_created_at: {type: Sequelize.DATE, allowNull: false},
+            iteration_created_at: {type: Sequelize.DATE, allowNull: true},
             is_active: {type: Sequelize.BOOLEAN, defaultValue: false},
             createdAt: {allowNull: false, type: Sequelize.DATE},
             updatedAt: {allowNull: false, type: Sequelize.DATE}
