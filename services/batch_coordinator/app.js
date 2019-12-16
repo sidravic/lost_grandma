@@ -104,10 +104,10 @@ class Coordinator extends BaseService {
 }
 
 
-let c = new Coordinator()
-
-c.invoke().then((r) => {
-    console.log(r);
-}).catch((e) => {
-    console.log(e);
-})
+// let c = new Coordinator()
+//
+// c.invoke().then((r) => {
+//     console.log(r);
+// }).catch((e) => {
+//     console.log(e);
+// })
