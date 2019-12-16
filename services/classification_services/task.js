@@ -1,5 +1,5 @@
 const logger = require('./../../config/logger.js');
-const createTrainingProject = require('./azure_classifier_training').createTrainingProject;
+const createProject = require('./azure_classifier_training').createProject;
 const {Brand, Product, Source, Image, ImageLabel, Review, ReviewComment, dbConn} = require('./../../models')
 const Sequelize = require('sequelize');
 
@@ -41,7 +41,7 @@ const onEachBatch = (project) => {
     return (async function (products) {
 
         const promise = Promise.all(products.map(async (product) => {
-            let jobPayload = {product: product.toJSON(), project: project}
+            let jobPayload = {product: product.toJSON(), project: {id: project.id, project_id: project.project_id }}
             const retryOptions = {removeOnComplete: true, removeOnFail: true};
             await ClassificationQueue.add('classification_queue', JSON.stringify(jobPayload), retryOptions);
         }))
@@ -55,7 +55,7 @@ const onEachBatch = (project) => {
 
 const main = async () => {
 
-    const project = await createTrainingProject();
+    const project = await createProject();
     await findProductsForClassification(project);
     logger.info({
         src: 'task.js',

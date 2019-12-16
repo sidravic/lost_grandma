@@ -4,8 +4,7 @@ const azurePredict = require('./azure_classifier_prediction')
 const {Brand, Product, Source, Image, Review, ReviewComment, dbConn} = require('../../models')
 
 const predict = async (service) => {
-    const projectId = process.env.PUBLISHED_PROJECT;
-    const predictionResponse = await azurePredict.predictUrl(projectId, service.urlForPrediction);
+    const predictionResponse = await azurePredict.predictUrl(service.urlForPrediction);
     service.predictionResponse = predictionResponse;
     const topPrediction = predictionResponse.predictions[0];
 

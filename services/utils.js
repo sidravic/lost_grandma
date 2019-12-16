@@ -4,18 +4,18 @@ const isEmpty = (object) => {
     return (Object.keys(object).length == 0 ? true : false)
 }
 
-module.exports.isEmpty = isEmpty;
 
-const any =  (arr) => {
+
+const any = (arr) => {
     if (!Array.isArray(arr)) {
         if (arr == null || arr == undefined) return false;
-        if (typeof(arr) == 'object')         return (!isEmpty(arr));
+        if (typeof (arr) == 'object') return (!isEmpty(arr));
     } else {
-        return ((arr.length > 0 ) ? true : false)
+        return ((arr.length > 0) ? true : false)
     }
 }
 
-module.exports.any = any;
+
 
 /*
 
@@ -41,7 +41,9 @@ const syncError = async (func) => {
         let errors = [];
 
         if (sequelizeErrors.includes(e.name)) {
-            errors = e.errors.map(error => { return error.message})
+            errors = e.errors.map(error => {
+                return error.message
+            })
             return [null, errors];
         } else {
             throw e;
@@ -49,20 +51,18 @@ const syncError = async (func) => {
     }
 }
 
-module.exports.syncError = syncError;
+
 
 /* Flattens an array ***/
 const flatten = (arr) => {
     return [].concat.apply([], arr)
 }
 
-module.exports.flatten = flatten;
 
 const generateRandomTill = (end) => {
     return (Math.floor(Math.random() * end))
 }
 
-module.exports.generateRandomTill = generateRandomTill;
 
 const timeout = (seconds) => {
     return new Promise((resolve, reject) => {
@@ -76,4 +76,16 @@ const sleep = async (delay) => {
     await timeout(delay);
 }
 
+const compact = (array) => {
+    const filteredArray = array.filter((val) => { return (val != null) && (val != undefined) })
+    return filteredArray;
+}
+
+
+module.exports.any = any;
+module.exports.isEmpty = isEmpty;
+module.exports.syncError = syncError;
+module.exports.flatten = flatten;
+module.exports.generateRandomTill = generateRandomTill;
 module.exports.sleep = sleep;
+module.exports.compact = compact;

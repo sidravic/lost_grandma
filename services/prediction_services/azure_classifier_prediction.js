@@ -1,13 +1,27 @@
 const logger = require('../../config/logger.js');
-const { PredictionAPIClient } = require("@azure/cognitiveservices-customvision-prediction");
-const urlPredictionEndpoint = process.env.AZURE_CUSTOM_VISION_CLASSIFIER_PREDICITION_ENDPOINT;
+const {ClassificationProject} = require('./../../models');
+const {PredictionAPIClient} = require("@azure/cognitiveservices-customvision-prediction");
+const urlPredictionEndpoint = process.env.AZURE_CUSTOM_VISION_CLASSIFIER_PREDICTION_ENDPOINT;
 const predictionKey = process.env.AZURE_CUSTOM_VISION_CLASSIFIER_PREDICTION_KEY;
 
-const predictUrl = async(projectId, imageUrl, endpoint=urlPredictionEndpoint) => {
-    const publishedModelName = process.env.PUBLISHED_MODEL_NAME;
+const getPublishedModel = async () => {
+    const classificationProject = await ClassificationProject.findOne({where: {status: ClassificationProject.defaultStates.PUBLISHED, is_active: true}},
+        {order: [['updatedAt', 'desc'], ['createdAt', 'desc']]})
+
+    return classificationProject;
+}
+
+const predictUrl = async (imageUrl, endpoint = urlPredictionEndpoint) => {
+    const classificationProject = await getPublishedModel();
+    const projectId = classificationProject.project_id;
+    const publishedModelName = classificationProject.iteration_name;
     const predictor = new PredictionAPIClient(predictionKey, endpoint);
     const predictionResponse = await predictor.classifyImageUrl(projectId, publishedModelName, {url: imageUrl});
-    logger.info({src: 'azure_classifier_prediction', event: 'predictUrl', data: {predictionResponse: predictionResponse}})
+    logger.info({
+        src: 'azure_classifier_prediction',
+        event: 'predictUrl',
+        data: {predictionResponse: predictionResponse}
+    })
     return predictionResponse;
 }
 
@@ -16,6 +30,4 @@ const azurePredict = {
 }
 
 
-
 module.exports = azurePredict;
-
