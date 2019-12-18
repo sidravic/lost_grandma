@@ -5,8 +5,17 @@ const urlPredictionEndpoint = process.env.AZURE_CUSTOM_VISION_CLASSIFIER_PREDICT
 const predictionKey = process.env.AZURE_CUSTOM_VISION_CLASSIFIER_PREDICTION_KEY;
 
 const getPublishedModel = async () => {
-    const classificationProject = await ClassificationProject.findOne({where: {status: ClassificationProject.defaultStates.PUBLISHED, is_active: true}},
-        {order: [['updatedAt', 'desc'], ['createdAt', 'desc']]})
+    const classificationProject = await ClassificationProject.findOne({
+        where: {
+            status: ClassificationProject.defaultStates.PUBLISHED,
+            is_active: true
+        }
+    }, {
+        order: [
+            ['updatedAt', 'desc'],
+            ['createdAt', 'desc']
+        ]
+    })
 
     return classificationProject;
 }
