@@ -27,7 +27,7 @@ const getSignedGETUrlFromS3Url = async (s3Url, bucketName = process.env.S3_IMAGE
 }
 
 const getSignedGETUrl = async (key, bucketName = process.env.S3_IMAGES_BUCKET_NAME, options={}) => {
-    const expiryInSeconds = options.expiry || 86400;
+    const expiryInSeconds = options.expiry || 172800;
     const response = await s3.getSignedUrlPromise('getObject', {Bucket: bucketName, Key: key, Expires: expiryInSeconds})
     return response;
 }

@@ -42,11 +42,11 @@ const findInBatches = async (modelName, batchSize, onBatch, options) => {
             findAllOptions = Object.assign(findAllOptions, {include: includeOptions});
         }
         
-        while (offset < totalCount) {
+        while (findAllOptions.offset < totalCount) {
             let products = await modelName.findAll(findAllOptions)
-            logger.info({ msg: `Fetching from ${offset} to ${(offset + products.length)}`, src: 'findInBatches', event: 'findInBatches' })
+            logger.info({ msg: `Fetching from ${findAllOptions.offset} to ${(findAllOptions.offset + products.length)}`, src: 'findInBatches', event: 'findInBatches' })
             callback(products);
-            offset = offset + products.length;
+            findAllOptions.offset = findAllOptions.offset + products.length;
             
             if (products.length == 0) {
                 return (new Promise((resolve, reject) => { resolve() }))        
