@@ -20,7 +20,7 @@ const getPrediction = async (service) => {
             data: {imageUrl: service.imageUrl}, error: {message: e.message, stack: e.stack}
         })
         service.addErrors(e.message);
-        service.errorCode('error_predicting_image')
+        service.errorCode = 'error_predicting_image';
         return
     }
 }

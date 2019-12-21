@@ -1,6 +1,6 @@
 const winston = require('winston');
 const LogstashTransport = require('winston-logstash-transport').LogstashTransport;
-
+const expressWinston = require('express-winston');
 
 const getTransports = () => {
     const transports = [
@@ -48,6 +48,19 @@ const logger = winston.createLogger({
     format: getFormats(),
     transports: getTransports()
 });
+
+const apiRequestLogger = expressWinston.logger({
+    level: 'info',
+    defaultMeta: {service: 'api'},
+    msg: 'HTTP {{req.method}} {{req.url}} {{res.statusCode}} {{req.method}} {{res.responseTime}}ms {{req.url}}"',
+    format: getFormats(),
+    colorize: true,
+    transports: getTransports(),
+
+});
+
+logger.apiRequestLogger = apiRequestLogger;
+
 
 if (process.env.NODE_ENV != 'test') {
     process.on('uncaughtException', (err) => {

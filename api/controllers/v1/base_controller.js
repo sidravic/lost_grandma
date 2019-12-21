@@ -31,13 +31,11 @@ const BaseController = {
         }
     },
 
-    badRequest: async (errorMessages) => {
+    badRequest: async (errorMessages, data={}) => {
 
         return {
             api_version: apiVersion,
-            data: {
-
-            },
+            data: data,
             errors: {
                 messages: errorMessages,
                 code: 'bad_request'
@@ -71,6 +69,20 @@ const BaseController = {
             errors: {
                 messages: errorMessages,
                 code: 'not_found'
+            },
+            success: false
+        }
+    },
+
+    internalError: (errorMessage=[]) => {
+        return {
+            api_version: apiVersion,
+            data: {
+
+            },
+            errors: {
+                messages: errorMessage,
+                code: 'internal_error'
             },
             success: false
         }
