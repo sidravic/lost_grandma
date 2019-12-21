@@ -3,6 +3,9 @@ const {any} = require('./../../../services/utils');
 const {successResponse, failureResponse, badRequest, internalError, unauthorized, notFound} = require('./base_controller')
 const {PredictionService, PredictionServiceResponse} = require('./../../../services/prediction_services/clarifai/coordinator');
 
+module.exports.Get =  (req, res, next) => {
+    res.render('index', {page: 'Predict', menuId: 'Home'});
+}
 
 // /api/v1/predictions
 module.exports.Create = async (req, res, next) => {

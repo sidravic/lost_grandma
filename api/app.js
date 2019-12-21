@@ -9,12 +9,16 @@ const port = process.env.PORT || 3001;
 const hostname = process.env.HOSTNAME || "0.0.0.0";
 
 app.use(bodyParser.json({type: "application/json"}));
-
 app.use(logger.apiRequestLogger);
 app.use(routes);
-
 app.use(notFound);
 app.use(errorResponder);
+app.set('views', __dirname + '/views')
+
+app.set('view engine', 'ejs');
+app.engine('ejs', require('ejs').renderFile);
+app.use(express.static('./public'))
+
 
 
 app.listen(port, hostname, () => {

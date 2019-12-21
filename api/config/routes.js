@@ -10,5 +10,6 @@ router.get('/', WelcomeController.Index);
 
 // Predictions
 
+router.get('/api/v1/predict', PredictionsController.Get);
 router.post('/api/v1/predict', PredictionsController.Create)
 module.exports = router;

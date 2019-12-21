@@ -1,7 +1,6 @@
 const logger = require('./../../config/logger');
 
 const requestLogger = (req, res, next) => {
-    debugger;
     logger.info({
         method: req.method,
         path: req.path,
@@ -12,7 +11,6 @@ const requestLogger = (req, res, next) => {
         response: res.body,
         status: res.status
     })
-
     next();
 }
 

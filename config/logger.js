@@ -52,7 +52,7 @@ const logger = winston.createLogger({
 const apiRequestLogger = expressWinston.logger({
     level: 'info',
     defaultMeta: {service: 'api'},
-    msg: 'HTTP {{req.method}} {{req.url}} {{res.statusCode}} {{req.method}} {{res.responseTime}}ms {{req.url}}"',
+    msg: 'HTTP {{req.method}} {{req.url}} {{res.statusCode}} {{res.responseTime}}ms {{req.url}}"',
     format: getFormats(),
     colorize: true,
     transports: getTransports(),
