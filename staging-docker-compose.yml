@@ -57,6 +57,8 @@ services:
     networks:
       - core-infra
     command: ["./api/launch.sh"]
+    ports:
+      - "3001:3001"
     deploy:
       restart_policy:
         condition: on-failure

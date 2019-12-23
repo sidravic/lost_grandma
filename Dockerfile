@@ -12,6 +12,7 @@ COPY . /app
 #RUN rm -r node_modules quick_queries
 
 # Install dependencies
+EXPOSE 3001
 
 RUN npm install --production
 
