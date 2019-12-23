@@ -38,33 +38,33 @@ services:
 #      placement:
 #        constraints:
 #          - node.labels.stateless == true
-#  tor:
-#    networks:
-#      - core-infra
-#    build:
-#      context: ./scripts/tor
-#      dockerfile: Dockerfile
-#    image: ${TOR_IMAGE_ID}
-#    expose:
-#      - 9050
-#      - 9080
-#      - 9051
-#    ports:
-#      - "9050:9050"
-#      - "9051:9051"
-#      - "9080:9080"
-#    command: ["./launch_tor.sh"]
-#    deploy:
-#      mode: replicated
-#      replicas: 2
-#      restart_policy:
-#        condition: on-failure
-#        delay: 5s
-#        max_attempts: 10
-#        window: 180s
-#      placement:
-#        constraints:
-#          - node.labels.stateless == true
+  tor:
+    networks:
+      - core-infra
+    build:
+      context: ./scripts/tor
+      dockerfile: Dockerfile
+    image: ${TOR_IMAGE_ID}
+    expose:
+      - 9050
+      - 9080
+      - 9051
+    ports:
+      - "9050:9050"
+      - "9051:9051"
+      - "9080:9080"
+    command: ["./launch_tor.sh"]
+    deploy:
+      mode: replicated
+      replicas: 2
+      restart_policy:
+        condition: on-failure
+        delay: 5s
+        max_attempts: 10
+        window: 180s
+      placement:
+        constraints:
+          - node.labels.stateless == true
 #
 #  batch_coordinator_service:
 #    depends_on:
