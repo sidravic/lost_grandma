@@ -56,7 +56,7 @@ services:
       - staging.env
     networks:
       - core-infra
-    command: ["./workers/clarifai_services/launch.sh"]
+    command: ["./api/launch.sh"]
     deploy:
       restart_policy:
         condition: on-failure
