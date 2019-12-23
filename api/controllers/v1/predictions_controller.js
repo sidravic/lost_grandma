@@ -1,3 +1,4 @@
+const logger = require('./../../../config/logger')
 const Joi = require('@hapi/joi')
 const {any} = require('./../../../services/utils');
 const {successResponse, failureResponse, badRequest, internalError, unauthorized, notFound} = require('./base_controller')
