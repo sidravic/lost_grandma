@@ -5,20 +5,28 @@
 </head>
 <body>
 <%- include ('partials/menu') %>
-<div class="container-fluid bg-3 text-center">
+<div class="container-fluid bg-3 text-center" id="searched-image">
+
+</div>
+
+<div class="container-fluid bg-3 text-center" id="search-by-image-url">
     <h3><%= page %></h3><br>
     <div class="row">
-        <div class="col-sm-4">
-            <p></p>
-        </div>
-        <div class="col-sm-4">
-            <p></p>
-        </div>
-        <div class="col-sm-4">
-            <p></p>
+        <div class="col-sm-12">
+            <form>
+                <div class="form-group">
+                    <label for="imageUrl">Search By Image</label>
+                    <input type="text" class="form-control" id="input-search-image-url" aria-describedby="Image Url">
+                    <small id="imageUrlHelp" class="form-text text-muted">Any image url with format jpg,png,jpeg.</small>
+                </div>
+                <button type="submit" class="btn btn-primary">Submit</button>
+            </form>
         </div>
     </div>
 </div>
+
+<div id="search-results"></div>
 </body>
 <%- include ('partials/script') %>
+<script src="/javascripts/search.js"></script>
 </html>

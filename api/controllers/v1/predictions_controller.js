@@ -18,9 +18,9 @@ module.exports.Create = async (req, res, next) => {
     }
 
     const service = new PredictionService();
-
     try {
         const predictionResponse = await service.invoke(requestBody.image_url)
+        const responseType = requestBody.responseType || 'json';
 
         const responsePayload = {
             image_url: requestBody.image_url,
@@ -28,10 +28,16 @@ module.exports.Create = async (req, res, next) => {
         }
 
         const response = successResponse(responsePayload);
-        return res.status(200).json(response);
+
+        if (responseType == 'json') {
+            return res.status(200).json(response);
+        } else {
+            debugger;
+            res.render('partials/predict/search_results', {products: predictionResponse.products})
+        }
     } catch (e) {
         let error;
-
+        debugger;
         if (e instanceof PredictionServiceResponse) {
             error = new Error(e.errorCode);
         } else {
@@ -53,7 +59,8 @@ const requestValidators = {
         const schema = Joi.object({
             image_url: Joi.string().pattern(imageUrlRegex).
                                     required().
-                                    messages({'string.pattern.base': 'must be a valid image url (jpg,png)'})
+                                    messages({'string.pattern.base': 'must be a valid image url (jpg,png)'}),
+            responseType: Joi.string().valid('html', 'json')
         });
 
         const validationResponse = schema.validate(requestBody)

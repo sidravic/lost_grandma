@@ -1,0 +1,14 @@
+<div class="container-fluid bg-3 text-center" id="search-by-image-url">
+    <% for(let i = 0; i < products.length; i++) { %>
+
+        <div class="card" style="width: 18rem; display: inline-block; margin: 3rem;">
+            <img src="<%= products[i].Images[0].image_url %>" class="card-img-top" alt="<%= products[i].name %>" style="width:18rem;height:18rem;">
+            <div class="card-body">
+                <h5 class="card-title"><%= products[i].name.toString() %></h5>
+                <p class="card-text"><%= products[i].Brand.name.toString() %></p>
+                <a href="#" class="btn btn-primary">Go somewhere</a>
+            </div>
+        </div>
+    <% } %>
+</div>
+

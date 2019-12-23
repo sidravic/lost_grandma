@@ -54,17 +54,18 @@ const getProductAndImages = async (service) => {
         where: {
                 id: {[op.in]: predictionProductIds }
         },
+        limit: 20,
         include: [{
             model: Image,
             required: true,
-            attributes: ['id', 's3_image_url']
+            attributes: ['id', 's3_image_url', 'image_url']
         }, {
             model: Brand,
             required: true,
             attributes: ['id', 'name']
         }],
         attributes: ['id', 'name', 'cosmetics_brand_id', 'usage', 'ingredients', 'description', 'price', 'size']
-    })
+    }, {raw: true})
 
     const sortedProducts = await sortProductsInOrder(predictionProductIds, products);
     service.products = sortedProducts;
