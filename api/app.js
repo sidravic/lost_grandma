@@ -7,7 +7,7 @@ const {notFound, errorResponder} = require('./middleware/error_handler');
 const routes = require("./config/routes");
 const app = express();
 const port = process.env.API_PORT || 3001;
-const hostname = process.env.HOSTNAME || "0.0.0.0";
+const hostname = "0.0.0.0";
 
 app.use(express.static('api/public'));
 app.use(bodyParser.json({type: "application/json"}));

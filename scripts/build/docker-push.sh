@@ -48,6 +48,7 @@ function lost_grandma_build_and_push(){
 }
 
 function export_image_locally(){
+    echo "${GITLAB_REGISTRY}/goglance/lost-grandma:${BRANCH_NAME}_${COMMIT_ID}"
     export LOST_GRANDMA_IMAGE_ID="${GITLAB_REGISTRY}/goglance/lost-grandma:${BRANCH_NAME}_${COMMIT_ID}"    
 }
 
