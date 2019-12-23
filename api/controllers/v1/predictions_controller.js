@@ -32,12 +32,11 @@ module.exports.Create = async (req, res, next) => {
         if (responseType == 'json') {
             return res.status(200).json(response);
         } else {
-            debugger;
             res.render('partials/predict/search_results', {products: predictionResponse.products})
         }
     } catch (e) {
         let error;
-        debugger;
+        logger.error({src: 'controller/predictions_controller', event: 'Create', error: {error: e}});
         if (e instanceof PredictionServiceResponse) {
             error = new Error(e.errorCode);
         } else {
