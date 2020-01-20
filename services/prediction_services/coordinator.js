@@ -2,12 +2,14 @@ const logger = require('../../config/logger.js');
 const {BaseService, BaseServiceResponse} = require('../base_service');
 const azurePredict = require('./azure_classifier_prediction')
 const {Brand, Product, Source, Image, Review, ReviewComment, dbConn} = require('../../models')
+const Sequelize = require('sequelize')
 
 const predict = async (service) => {
     const predictionResponse = await azurePredict.predictUrl(service.urlForPrediction);
     service.predictionResponse = predictionResponse;
+    debugger;
     const topPrediction = predictionResponse.predictions[0];
-
+    const top5Predictions = predictionResponse.predictions.splice(0, 5)
     if (!topPrediction) {
         service.addErrors(['Top prediction not found'])
         service.errorCode = 'error_top_predicition_not_found';
@@ -16,8 +18,9 @@ const predict = async (service) => {
 
     service.topPredictionTag = topPrediction.tagName;
     service.predictionConfidence = topPrediction.probability;
+    service.top5Predictions = top5Predictions;
 
-    if (topPrediction.probability < 0.80) {
+    if (topPrediction.probability < 0.40) {
         service.addErrors(['Error low confidence'])
         service.errorCode = 'error_low_prediction_confidence';
         return service.predictionResponse;
@@ -27,26 +30,54 @@ const predict = async (service) => {
 
 }
 
+const sortProductsInOrder = async (predictionProductIds, products) => {
+    const sortedProducts= [];
+
+    predictionProductIds.forEach((productId) => {
+        products.forEach((product) => {
+            if (product.id == productId) {
+                sortedProducts.push(product);
+            }
+        })
+    })
+
+    return sortedProducts;
+}
+
 const fetchPredictedProduct = async (service) => {
     if (service.anyErrors()) {
         return;
     }
 
-    const product = await Product.findByPk(service.topPredictionTag.toString(), {
-        include: [{
-            model: Brand, required: true
-        }, {
-            model: Image, required: true
-        }]
+    const predictionProductIds = service.top5Predictions.map((prediction) => {
+        return prediction.tagName;
     })
 
-    if (!product){
+    const op = Sequelize.Op;
+    const products = await Product.findAll( {
+        where: {
+          id: {[op.in]: predictionProductIds }
+        },
+        include: [{
+            model: Brand, required: true,
+            required: true,
+            attributes: ['id', 'name']
+        }, {
+            model: Image,
+            required: true,
+            attributes: ['id', 's3_image_url', 'image_url']
+        }],
+        attributes: ['id', 'name', 'cosmetics_brand_id', 'usage', 'ingredients', 'description', 'price', 'size']
+    })
+
+    if (!products){
         service.addErrors(['product not found']);
         service.errorCode = 'error_product_not_found';
     }
 
-    service.product = product;
-    return product;
+    const sortedProducts = await sortProductsInOrder(predictionProductIds, products)
+    service.products = sortedProducts;
+    return sortedProducts;
 }
 
 class Coordinator extends BaseService {
@@ -56,7 +87,7 @@ class Coordinator extends BaseService {
         this.predictionResponse = {};
         this.predictionConfidence = 0
         this.topPredictionTag = null;
-        this.product = null;
+        this.products = null;
 
     }
 
@@ -67,7 +98,7 @@ class Coordinator extends BaseService {
 
         return (new Promise((resolve, reject) => {
             const response = new CoordinatorResponse(this.errors, this.errorCode, this.urlForPrediction,
-                this.predictionResponse, this.topPredictionTag, this.predictionConfidence, this.product)
+                this.predictionResponse, this.topPredictionTag, this.predictionConfidence, this.products)
             if (this.anyErrors()) {
                 reject(response);
             } else {
@@ -78,14 +109,14 @@ class Coordinator extends BaseService {
 }
 
 class CoordinatorResponse extends BaseServiceResponse {
-    constructor(errors, errorCode, urlForPrediction, predictionResponse, topPredictionTag, predictionConfidence, product) {
+    constructor(errors, errorCode, imageUrl, predictionResponse, topPredictionTag, predictionConfidence, products) {
         super(errors, errorCode);
 
-        this.urlForPrediction = urlForPrediction;
+        this.imageUrl = imageUrl;
         this.predictionResponse = predictionResponse;
         this.topPredictionTag = topPredictionTag;
         this.predictionConfidence = predictionConfidence;
-        this.product = product;
+        this.products = products;
     }
 }
 

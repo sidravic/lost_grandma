@@ -16,7 +16,7 @@ __G = (($, Glance) => {
         console.log(data);
 
         $.ajax({
-            url: '/api/v1/predict',
+            url: '/api/v1/azure/predict',
             type: 'post',
             data: JSON.stringify(data),
             contentType: 'application/json',

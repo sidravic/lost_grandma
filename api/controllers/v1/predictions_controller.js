@@ -3,6 +3,7 @@ const Joi = require('@hapi/joi')
 const {any} = require('./../../../services/utils');
 const {successResponse, failureResponse, badRequest, internalError, unauthorized, notFound} = require('./base_controller')
 const {PredictionService, PredictionServiceResponse} = require('./../../../services/prediction_services/clarifai/coordinator');
+const AzurePredictionService = require('./../../../services/prediction_services/coordinator')
 
 module.exports.Get =  (req, res, next) => {
     res.render('index', {page: 'Predict', menuId: 'Home'});
@@ -11,20 +12,28 @@ module.exports.Get =  (req, res, next) => {
 // /api/v1/predictions
 module.exports.Create = async (req, res, next) => {
     const requestBody = req.body;
-    const errors = await requestValidators.validateGet(requestBody);
+    const provider = req.params.provider;
+    const requestParams = {provider: provider, ...requestBody}
+    const errors = await requestValidators.validateGet(requestParams);
 
     if (any(errors)) {
         const response = await badRequest(errors)
         return res.status(400).json(response);
     }
 
-    const service = new PredictionService();
+    let service;
+    if (provider == 'azure') {
+        service = new AzurePredictionService();
+    } else {
+        service = new PredictionService();
+    }
+
     try {
         const predictionResponse = await service.invoke(requestBody.image_url)
-        const responseType = requestBody.responseType || 'json';
+        const responseType = requestParams.responseType || 'json';
 
         const responsePayload = {
-            image_url: requestBody.image_url,
+            image_url: requestParams.image_url,
             products: predictionResponse.products
         }
 
@@ -60,7 +69,8 @@ const requestValidators = {
             image_url: Joi.string().pattern(imageUrlRegex).
                                     required().
                                     messages({'string.pattern.base': 'must be a valid image url (jpg,png)'}),
-            responseType: Joi.string().valid('html', 'json')
+            responseType: Joi.string().valid('html', 'json'),
+            provider: Joi.string().required().valid('azure', 'clarifai')
         });
 
         const validationResponse = schema.validate(requestBody)

@@ -21,7 +21,7 @@ const getPublishedModel = async () => {
 }
 
 const predictUrl = async (imageUrl, endpoint = urlPredictionEndpoint) => {
-    const classificationProject = await getPublishedModel();
+    const classificationProject = {project_id: 'd1b72a4d-a142-41c4-8e59-fa80ae3e7a17', iteration_name: 'development-classifier-interation-$1579413357'}
     const projectId = classificationProject.project_id;
     const publishedModelName = classificationProject.iteration_name;
     const predictor = new PredictionAPIClient(predictionKey, endpoint);
