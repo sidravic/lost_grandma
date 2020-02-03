@@ -4,8 +4,9 @@ const {any} = require('./../../../services/utils');
 const {successResponse, failureResponse, badRequest, internalError, unauthorized, notFound} = require('./base_controller')
 const {PredictionService, PredictionServiceResponse} = require('./../../../services/prediction_services/clarifai/coordinator');
 const AzurePredictionService = require('./../../../services/prediction_services/coordinator')
+const {FastAIPredictionService} = require('./../../../services/prediction_services/fastai/coordinator');
 
-module.exports.Get =  (req, res, next) => {
+module.exports.Get = (req, res, next) => {
     res.render('index', {page: 'Predict', menuId: 'Home'});
 }
 
@@ -24,8 +25,8 @@ module.exports.Create = async (req, res, next) => {
     let service;
     if (provider == 'azure') {
         service = new AzurePredictionService();
-    } else {
-        service = new PredictionService();
+    } else if (provider == 'fastai') {
+        service = new FastAIPredictionService();
     }
 
     try {
@@ -66,11 +67,9 @@ const requestValidators = {
         let errors = [];
 
         const schema = Joi.object({
-            image_url: Joi.string().pattern(imageUrlRegex).
-                                    required().
-                                    messages({'string.pattern.base': 'must be a valid image url (jpg,png)'}),
+            image_url: Joi.string().pattern(imageUrlRegex).required().messages({'string.pattern.base': 'must be a valid image url (jpg,png)'}),
             responseType: Joi.string().valid('html', 'json'),
-            provider: Joi.string().required().valid('azure', 'clarifai')
+            provider: Joi.string().required().valid('azure', 'clarifai', 'fastai')
         });
 
         const validationResponse = schema.validate(requestBody)

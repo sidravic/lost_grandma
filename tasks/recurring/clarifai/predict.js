@@ -14,7 +14,6 @@ if (!imageUrl) {
 
 const service = new PredictionService();
 service.invoke(imageUrl).then((r) => {
-    debugger;
     console.log(r);
 })
 

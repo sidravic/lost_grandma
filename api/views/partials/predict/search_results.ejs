@@ -6,7 +6,7 @@
             <div class="card-body">
                 <h5 class="card-title"><%= products[i].name.toString() %></h5>
                 <p class="card-text"><%= products[i].Brand.name.toString() %></p>
-                <a href="#" class="btn btn-primary">Go somewhere</a>
+                <a href='<%= "/api/v1/products/" + products[i].id %>' class="btn btn-primary">Go somewhere</a>
             </div>
         </div>
     <% } %>

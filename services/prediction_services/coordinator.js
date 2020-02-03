@@ -7,7 +7,6 @@ const Sequelize = require('sequelize')
 const predict = async (service) => {
     const predictionResponse = await azurePredict.predictUrl(service.urlForPrediction);
     service.predictionResponse = predictionResponse;
-    debugger;
     const topPrediction = predictionResponse.predictions[0];
     const top5Predictions = predictionResponse.predictions.splice(0, 5)
     if (!topPrediction) {

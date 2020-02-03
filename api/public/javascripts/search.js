@@ -6,6 +6,9 @@ __G = (($, Glance) => {
     const handleSubmit = (e) => {
 
         e.preventDefault();
+        const currentUrl = window.location.href;
+        const targetClassifier =  currentUrl.split('/')[5]
+
         let imageUrl = $('#input-search-image-url').val();
 
         if((!imageUrl) || (imageUrl.trim() == '')) {
@@ -13,10 +16,10 @@ __G = (($, Glance) => {
         };
 
         let data = {image_url: imageUrl, responseType: 'html'};
-        console.log(data);
+        let targetUrl = '/api/v1/' + targetClassifier + '/predict';
 
         $.ajax({
-            url: '/api/v1/azure/predict',
+            url: targetUrl,
             type: 'post',
             data: JSON.stringify(data),
             contentType: 'application/json',
@@ -43,6 +46,8 @@ __G = (($, Glance) => {
     }
 
     $(document).ready(() => {
+     
+
         Glance.SearchByImage.search();
         Glance.SearchByImage.handleSearchedUrl();
     });
