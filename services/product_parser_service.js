@@ -4,6 +4,9 @@ const url = require('url')
 
 const ProductFeedbackFetcherService = require('./product_feedback_fetcher');
 const PersistQueue = require('./../workers/persist_queue').PersistQueue;
+const {writeToFile, mkdir} = require('./file.js')
+const {format} = require('date-fns')
+const path = require('path')
 
 const { isEmpty }  = require('./utils');
 
@@ -187,9 +190,19 @@ class ProductParserService {
     }
 
     async addToPersistQueue(){
-        const retryOptions = { removeOnComplete: true, attempts: 50}
-        const job = await PersistQueue.add('persist_queue', JSON.stringify(this.productInfo), retryOptions);
-        logger.info({ src: 'ProductParserService', event: 'JobAddedToPersistQueue', data: {productId: this.productId, url: this.queueItem.url }});
+        //const retryOptions = { removeOnComplete: true, attempts: 50}
+        //const job = await PersistQueue.add('persist_queue', JSON.stringify(this.productInfo), retryOptions);
+        //logger.info({ src: 'ProductParserService', event: 'JobAddedToPersistQueue', data: {productId: this.productId, url: this.queueItem.url }});
+
+        const baseFilePath = path.resolve('./product_files')
+        const fileName = `${this.productInfo.brand}_${this.productInfo.name}`
+        const today = new Date()
+        const folderName = format(today, 'dd-MM-yyyy')
+        const fullFolderPath = `${baseFilePath}/${folderName}`
+        const fullFilePath = `${fullFolderPath}/${fileName}.json`
+        await mkdir(fullFolderPath)
+        await writeToFile(fullFilePath, JSON.stringify(this.productInfo))
+        return
     }
 }
 
