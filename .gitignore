@@ -13,4 +13,6 @@ stack-development.env
 staging.env
 download_images
 /services/image_services/test_upload.js
+staging-docker-compose.yml
+.gitlab-ci.yml
 
